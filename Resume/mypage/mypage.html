@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPage</title>
+    <link rel="stylesheet" type="text/css" href="styles/styles.css">
+</head>
+<body>
+    <div class="common header">
+        <h1>The Roman Empire</h1>
+    </div>
+    <nav class = common>
+        <a href="../mainPage/index.html">Flight Page</a>
+        <a href="../Resume/index.html">Resume</a>
+        <a href="#video">Video</a>
+        <a href="#map">Map</a>
+    </nav>
+    <div class="common mainbody">
+        <br>
+        <!--Image and list-->
+        <h2>Important Places in Rome</h2>
+        <img src="pictures/Rome.jpeg">
+        <br>
+        <ol>
+            <li>Ostia Antica</li>
+            <Ul>
+                <li>Commercial and military seaport for ancient Rome</li>
+                <li>Dates to 3rd-4th century BC</li>
+                <li>At one point, 100,000 people lived here</li>
+            </Ul>
+            <li>The Pantheon</li>
+            <li>The Colosseum</li>
+            <li>Circus Maximus</li>
+            <li>Park of the Aqueducts</li>
+        </ol>
+
+        <br>
+        <!--Video-->
+        <h2 id="video">How Rome Forged an Epic Empire (History Channel) </h2>
+        <iframe width="1120" height="630" src="https://www.youtube.com/embed/gxqPbGqYACw?si=3D7dzOeZ5MAvwCOz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <br>
+        <!--Tableau Eement-->
+        <h2 id="map">Map of the Roman Empire</h2>
+        <div class='tableauPlaceholder' id='viz1713022853815' style='position: relative'>
+            <noscript>
+                <a href='#'>
+                    <img alt='Roman Empire ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;ZN&#47;ZN9BNBC6W&#47;1_rss.png' style='border: none' />
+                </a>
+            </noscript>
+            <object class='tableauViz'  style='display:none;'>
+                <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> 
+                <param name='embed_code_version' value='3' /> 
+                <param name='path' value='shared&#47;ZN9BNBC6W' /> 
+                <param name='toolbar' value='yes' />
+                <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;ZN&#47;ZN9BNBC6W&#47;1.png' /> 
+                <param name='animate_transition' value='yes' />
+                <param name='display_static_image' value='yes' />
+                <param name='display_spinner' value='yes' />
+                <param name='display_overlay' value='yes' />
+                <param name='display_count' value='yes' />
+                <param name='language' value='en-US' />
+            </object>
+        </div>                
+        <script type='text/javascript'>
+        var divElement = document.getElementById('viz1713022853815');
+        var vizElement = divElement.getElementsByTagName('object')[0];
+        vizElement.style.width='1400px';vizElement.style.height='1327px';
+        var scriptElement = document.createElement('script');
+        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+        </script>
+        <br>
+    </div>
+    <div class="common footer">
+        &copy; 2024 Matthew Conger
+    </div>
+</body>
+</html>
