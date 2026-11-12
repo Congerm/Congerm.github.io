@@ -1,0 +1,562 @@
+[
+  {
+    "objectID": "portal/index.html",
+    "href": "portal/index.html",
+    "title": "Data Portal",
+    "section": "",
+    "text": "Signed in as Guest — base (public) permission. Sign in for elevated access · Back to site\nAccess tiers: Guest base views · Member extended datasets · Admin full platform."
+  },
+  {
+    "objectID": "portal/index.html#datasets-tools",
+    "href": "portal/index.html#datasets-tools",
+    "title": "Data Portal",
+    "section": "Datasets & tools",
+    "text": "Datasets & tools\n\n\n\nStocks & Prices\nDaily prices, reference data, and earnings for the S&P 500 universe (stocks.*). Screener-style browser and per-ticker pages.\nComing soon Member\n\n\n\n\nFilings & Events\nSEC filing dates and post-earnings drift event windows powering the PEAD research.\nComing soon Member\n\n\n\n\nNews Corpus\nThe scraped article corpus (news.*) — tickers, sentiment scores, and embeddings built on top.\nComing soon Admin\n\n\n\n\nDashboards\nCross-dataset views: watchlists, drift monitors, and portfolio analytics.\nComing soon Member\n\n\n\n\nQuery Access\nRead-only SQL / API access to curated schemas for approved users.\nComing soon Admin\n\n\n\n\nData Dictionary\nSchema browser for raw_*, staging, and fct_*/dim_* marts — what each table and column means.\nComing soon Guest\n\n\n\n\nPlaceholder landing — pages above are stubs we build out next. Auth is being wired to the app_auth backend; until then this page is reachable directly and the guest button stands in for real gating."
+  },
+  {
+    "objectID": "articles/stat469-food-cost.html",
+    "href": "articles/stat469-food-cost.html",
+    "title": "How Income Relates to Restaurant Spending",
+    "section": "",
+    "text": "A client-facing report for the National Restaurant Association built on the Food Demand Survey (523 households). Weekly food-away-from-home spending is modeled against annual income with splines inside a GAMLSS framework, capturing both the nonlinear mean relationship and the growing variance at high incomes.\n\nReport: Food-Cost-Project.pdf\nSource: Food Cost Project.qmd\nR GAMLSS Splines Report",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "How Income Relates to Restaurant Spending"
+    ]
+  },
+  {
+    "objectID": "articles/stat469-company-growth.html",
+    "href": "articles/stat469-company-growth.html",
+    "title": "VistaLux 2025 Growth Projections",
+    "section": "",
+    "text": "A forecasting study presented as RevealJS slides: quarterly growth for the fictional company VistaLux is modeled from macroeconomic predictors (income, production, savings, unemployment) using Facebook Prophet and a dynamic regression with ARIMA errors, then projected through 2025.\n\nSlides: Company-Growth-slides.pdf\nSource: Company Growth.qmd · _compute.R\nR Prophet Time Series RevealJS",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "VistaLux 2025 Growth Projections"
+    ]
+  },
+  {
+    "objectID": "articles/stat250-clt.html",
+    "href": "articles/stat250-clt.html",
+    "title": "Central Limit Theorem Group Project",
+    "section": "",
+    "text": "Simulation-based demonstrations of the Central Limit Theorem: repeated sampling from binomial and gamma populations, convergence visualizations, and group reports/presentations.\nLarge binary artifacts (.zip, .Rda &gt;5MB) were excluded from the archive — see LARGE-FILES-EXCLUDED.md in the project folder.\n\nReports: Binomial report Gamma report\nSource: CentralLimitTheoremReport.qmd · main.R · proj1.R\nR Simulation Group",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Central Limit Theorem Group Project"
+    ]
+  },
+  {
+    "objectID": "articles/index.html",
+    "href": "articles/index.html",
+    "title": "Articles",
+    "section": "",
+    "text": "Report-style work: technical reports, statistical write-ups, and blog posts. Interactive apps and pipelines live under Projects.\n\n\n\n\n\n\n\n\n\n\n\n\n\nApply Function VS Vectorized Operations\n\n\nPandas .apply() vs vectorized operations — when row-wise apply is fine and when vectorization wins on speed.\n\n\n\n\n\n\n\n\n\nData Acquisition For Reporting Analysis\n\n\nBuilding the SEC filings + price dataset behind the post-earnings drift study — yfinance, EDGAR, and CIK resolution.\n\n\n\n\n\n\n\n\n\nPost-Earnings Announcement Drift in S&P 500 Companies, 2015–2025\n\n\nTechnical research report: does return variance stay elevated after SEC filings? CUSUM variance-change detection inside a functional data framework.\n\n\n\n\n\n\n\n\n\nCentral Limit Theorem Group Project\n\n\nSTAT 250 group project — simulation studies of the CLT for binomial and gamma sampling distributions, with reports and RevealJS presentations.\n\n\n\n\n\n\n\n\n\nHousing Regression (STAT 330)\n\n\nMultiple linear regression final project — model selection, diagnostics, and validation on housing data in R.\n\n\n\n\n\n\n\n\n\nVistaLux 2025 Growth Projections\n\n\nSTAT 469 time-series project — forecasting quarterly company growth with Prophet and dynamic regression (ARIMA errors) on macro predictors.\n\n\n\n\n\n\n\n\n\nEducation Data Article\n\n\nSTAT 469 independent-investigation article analyzing education data — Quarto report with PDF output.\n\n\n\n\n\n\n\n\n\nHow Income Relates to Restaurant Spending\n\n\nSTAT 469 consulting-style report — GAMLSS with splines on Food Demand Survey data: eating-out spending rises quickly then levels off, and gets less predictable at high…\n\n\n\n\n\n\n\n\n\nFunctional Data Analysis — Filings & Intraday Returns\n\n\nSTAT 495R final project applying FDA (FPCA, functional regression) to intraday price curves around SEC filings.\n\n\n\n\n\nNo matching items",
+    "crumbs": [
+      "Home",
+      "Articles"
+    ]
+  },
+  {
+    "objectID": "articles/blog-apply-vs-vectorized.html",
+    "href": "articles/blog-apply-vs-vectorized.html",
+    "title": "Apply Function VS Vectorized Operations",
+    "section": "",
+    "text": "In Class I have been learning about how to utilize Pandas in my data cleaning and analysis. One of the earliest functions we learned is the .apply() function. This is a super useful function that we can use to make changes to all of our rows in one call.\nThe downside is, it isn’t always the most efficient. This often wont make a huge difference but if we are working with large data sets, it can cut your run time down by a lot.\nIn this article, I hope to explain:\n\nHow does .apply() work?\nWhen should we use it?\nWhat is the alternative?\n\nHaving an understanding of apply() and its shortcomings will help you spend less time waiting on your computer and make you a better Data Scientist\n\n\n\n\nThe .apply() function takes another function and applies it to each row or column in a Series or DataFrame.\nIf it sounds like a loop, that’s because it kind of is one.\n\n.apply() executes Python code row-by-row.\n\nThis is the main shortcoming, rather than doing things all at once, its going through, one at a time and this takes time while simultaneously not allowing your computer to work as hard as it could using other methods.This is why the difference is much more noticeable on larger datasets.\n\n\nimport pandas as pd\n\ndf = pd.DataFrame({\n    \"score\": [72, 88, 95, 60, 83]\n})\n\ndef pass_fail(x):\n    return \"Pass\" if x &gt;= 70 else \"Fail\"\n\ndf[\"result\"] = df[\"score\"].apply(pass_fail)\ndf\nThis is a great use for apply(), it keeps the code intuitive and since it isn’t very large, we dont even notice the extra time it takes.\n\n\n\n\n\n.apply() makes the most sense when:\n\nWhen your logic is complex and hard to vectorize\nYou have conditional transformations\nYou are in the EDA phase of your analysis\nYour dataset is small enough that you aren’t worried about how long it takes\n\n\n\ndef categorize(score):\n    if score &gt;= 90:\n        return \"A\"\n    elif score &gt;= 80:\n        return \"B\"\n    elif score &gt;= 70:\n        return \"C\"\n    else:\n        return \"Below C\"\n\ndf[\"grade\"] = df[\"score\"].apply(categorize)\ndf\nSimilarly to the previous example, this helps the code to be easy to read and understand.\n\n\n\n\n\nThe biggest issue is size.\n.apply() as mentioned before works almost like a loop, meaning it performs the operations over and over where as other methods can do it all at once. It still does it very quickly so unless you’re dealing with hundreds of rows it probably wont be a problem but sometimes we are working with millions of rows and that can have a huge difference.\nAn example of .apply() not being ideal is finding a mean:\n\\[\n\\bar{x} = \\frac{1}{n} \\sum_{i=1}^{n} x_i\n\\]\nBeing able to write it as a simple formula is a big hint that alternative options will be feasible and doing something like this in a loop will take forever. So what are your options?\n\n\n\n\nBringing us back to Linear algebra and using vectors can help us do some of our computations way more efficiently.\nYou may be thinking that this is great for numbers but we can also use it with boolean data.\n\n\ndf[\"result_vectorized\"] = df[\"score\"] &gt;= 70\ndf\nThis adds a new column to our dataframe which we can compare to our earlier results, this time it returns True or False which is a little bit less readable but often we would want it that way anyway. Another limitation is that our grade column is going to be much harder to replicate. As you can see by the code though, once you’re familiar with how it works, its more concise and easier to read.\nThe reason this is so much faster is because it converts the columns into vectors and does everything all at once rather than every row individually.\nSince optimization can be really important, Pandas has published official documentation to improve performance. Link Here.\n\n\n\n\n\n{fig-alt=“Image comparing loops (Apply function) vs vectorized logic}\nFigure: Vectorized operations operate on entire arrays at once, rather than looping through rows individually.\n\n\n\n\nBefore using the .apply() function:\n\nIs this logic simple?\nIs there a built-in Pandas function for this?\nWould a Boolean response work?\n\nIf you answer yes to any of these, consider avoiding .apply()\n\n\n\n\n.apply() is great and extremely useful in many ways but it isn’t the best tool for every job.\nSteps to take:\n\nUtilize built-in Pandas methods whenever possible\n\nTry Vectorized operations\nUse .apply() for complex custom transformations\n\nEven if you’re currently working with smaller data where efficiency isn’t a huge priority, consider practicing more efficient methods to build those skills and to be ready for larger datasets.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Apply Function VS Vectorized Operations"
+    ]
+  },
+  {
+    "objectID": "articles/blog-apply-vs-vectorized.html#introduction",
+    "href": "articles/blog-apply-vs-vectorized.html#introduction",
+    "title": "Apply Function VS Vectorized Operations",
+    "section": "",
+    "text": "In Class I have been learning about how to utilize Pandas in my data cleaning and analysis. One of the earliest functions we learned is the .apply() function. This is a super useful function that we can use to make changes to all of our rows in one call.\nThe downside is, it isn’t always the most efficient. This often wont make a huge difference but if we are working with large data sets, it can cut your run time down by a lot.\nIn this article, I hope to explain:\n\nHow does .apply() work?\nWhen should we use it?\nWhat is the alternative?\n\nHaving an understanding of apply() and its shortcomings will help you spend less time waiting on your computer and make you a better Data Scientist",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Apply Function VS Vectorized Operations"
+    ]
+  },
+  {
+    "objectID": "articles/blog-apply-vs-vectorized.html#how-does-.apply-work",
+    "href": "articles/blog-apply-vs-vectorized.html#how-does-.apply-work",
+    "title": "Apply Function VS Vectorized Operations",
+    "section": "",
+    "text": "The .apply() function takes another function and applies it to each row or column in a Series or DataFrame.\nIf it sounds like a loop, that’s because it kind of is one.\n\n.apply() executes Python code row-by-row.\n\nThis is the main shortcoming, rather than doing things all at once, its going through, one at a time and this takes time while simultaneously not allowing your computer to work as hard as it could using other methods.This is why the difference is much more noticeable on larger datasets.\n\n\nimport pandas as pd\n\ndf = pd.DataFrame({\n    \"score\": [72, 88, 95, 60, 83]\n})\n\ndef pass_fail(x):\n    return \"Pass\" if x &gt;= 70 else \"Fail\"\n\ndf[\"result\"] = df[\"score\"].apply(pass_fail)\ndf\nThis is a great use for apply(), it keeps the code intuitive and since it isn’t very large, we dont even notice the extra time it takes.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Apply Function VS Vectorized Operations"
+    ]
+  },
+  {
+    "objectID": "articles/blog-apply-vs-vectorized.html#when-to-use-.apply",
+    "href": "articles/blog-apply-vs-vectorized.html#when-to-use-.apply",
+    "title": "Apply Function VS Vectorized Operations",
+    "section": "",
+    "text": ".apply() makes the most sense when:\n\nWhen your logic is complex and hard to vectorize\nYou have conditional transformations\nYou are in the EDA phase of your analysis\nYour dataset is small enough that you aren’t worried about how long it takes\n\n\n\ndef categorize(score):\n    if score &gt;= 90:\n        return \"A\"\n    elif score &gt;= 80:\n        return \"B\"\n    elif score &gt;= 70:\n        return \"C\"\n    else:\n        return \"Below C\"\n\ndf[\"grade\"] = df[\"score\"].apply(categorize)\ndf\nSimilarly to the previous example, this helps the code to be easy to read and understand.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Apply Function VS Vectorized Operations"
+    ]
+  },
+  {
+    "objectID": "articles/blog-apply-vs-vectorized.html#when-.apply-could-be-the-wrong-choice",
+    "href": "articles/blog-apply-vs-vectorized.html#when-.apply-could-be-the-wrong-choice",
+    "title": "Apply Function VS Vectorized Operations",
+    "section": "",
+    "text": "The biggest issue is size.\n.apply() as mentioned before works almost like a loop, meaning it performs the operations over and over where as other methods can do it all at once. It still does it very quickly so unless you’re dealing with hundreds of rows it probably wont be a problem but sometimes we are working with millions of rows and that can have a huge difference.\nAn example of .apply() not being ideal is finding a mean:\n\\[\n\\bar{x} = \\frac{1}{n} \\sum_{i=1}^{n} x_i\n\\]\nBeing able to write it as a simple formula is a big hint that alternative options will be feasible and doing something like this in a loop will take forever. So what are your options?",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Apply Function VS Vectorized Operations"
+    ]
+  },
+  {
+    "objectID": "articles/blog-apply-vs-vectorized.html#vectorization",
+    "href": "articles/blog-apply-vs-vectorized.html#vectorization",
+    "title": "Apply Function VS Vectorized Operations",
+    "section": "",
+    "text": "Bringing us back to Linear algebra and using vectors can help us do some of our computations way more efficiently.\nYou may be thinking that this is great for numbers but we can also use it with boolean data.\n\n\ndf[\"result_vectorized\"] = df[\"score\"] &gt;= 70\ndf\nThis adds a new column to our dataframe which we can compare to our earlier results, this time it returns True or False which is a little bit less readable but often we would want it that way anyway. Another limitation is that our grade column is going to be much harder to replicate. As you can see by the code though, once you’re familiar with how it works, its more concise and easier to read.\nThe reason this is so much faster is because it converts the columns into vectors and does everything all at once rather than every row individually.\nSince optimization can be really important, Pandas has published official documentation to improve performance. Link Here.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Apply Function VS Vectorized Operations"
+    ]
+  },
+  {
+    "objectID": "articles/blog-apply-vs-vectorized.html#visualizing-the-difference",
+    "href": "articles/blog-apply-vs-vectorized.html#visualizing-the-difference",
+    "title": "Apply Function VS Vectorized Operations",
+    "section": "",
+    "text": "{fig-alt=“Image comparing loops (Apply function) vs vectorized logic}\nFigure: Vectorized operations operate on entire arrays at once, rather than looping through rows individually.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Apply Function VS Vectorized Operations"
+    ]
+  },
+  {
+    "objectID": "articles/blog-apply-vs-vectorized.html#just-to-reiterate",
+    "href": "articles/blog-apply-vs-vectorized.html#just-to-reiterate",
+    "title": "Apply Function VS Vectorized Operations",
+    "section": "",
+    "text": "Before using the .apply() function:\n\nIs this logic simple?\nIs there a built-in Pandas function for this?\nWould a Boolean response work?\n\nIf you answer yes to any of these, consider avoiding .apply()",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Apply Function VS Vectorized Operations"
+    ]
+  },
+  {
+    "objectID": "articles/blog-apply-vs-vectorized.html#conclusion",
+    "href": "articles/blog-apply-vs-vectorized.html#conclusion",
+    "title": "Apply Function VS Vectorized Operations",
+    "section": "",
+    "text": ".apply() is great and extremely useful in many ways but it isn’t the best tool for every job.\nSteps to take:\n\nUtilize built-in Pandas methods whenever possible\n\nTry Vectorized operations\nUse .apply() for complex custom transformations\n\nEven if you’re currently working with smaller data where efficiency isn’t a huge priority, consider practicing more efficient methods to build those skills and to be ready for larger datasets.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Apply Function VS Vectorized Operations"
+    ]
+  },
+  {
+    "objectID": "projects/stat286-pokemon.html",
+    "href": "projects/stat286-pokemon.html",
+    "title": "Pokemon Battle Simulator",
+    "section": "",
+    "text": "Simulates Pokemon battles and analyzes outcome distributions — p1_pokemon_battle.py plus Quarto render-to-PDF write-ups.\n\nWrite-up: Pokemon_Proj_set(42).pdf\nSource: p1_pokemon_battle.py · Pokemon_proj.qmd\nPython Simulation",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "Pokemon Battle Simulator"
+    ]
+  },
+  {
+    "objectID": "projects/is303-hair-salon.html",
+    "href": "projects/is303-hair-salon.html",
+    "title": "Hair Salon Manager (IS 303)",
+    "section": "",
+    "text": "A small business-management app built with a team for IS 303: it imports starting data from Excel into SQLite (p3_data_import.py), models the domain in p3_db_classes.py, and provides check-in and manager-tool flows (p3_check_in.py, p3_manager_tools.py).\n\nSource: p3_db_classes.py · p3_check_in.py · p3_data_import.py · p3_manager_tools.py\nPython SQLite Group",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "Hair Salon Manager (IS 303)"
+    ]
+  },
+  {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Projects",
+    "section": "",
+    "text": "Apps, pipelines, and interactive work — each page links to the project folder in the monorepo’s research/ directory (or its own repository). Report-style analysis and writing lives under Articles.",
+    "crumbs": [
+      "Home",
+      "Projects"
+    ]
+  },
+  {
+    "objectID": "projects/index.html#elsewhere-on-github",
+    "href": "projects/index.html#elsewhere-on-github",
+    "title": "Projects",
+    "section": "Elsewhere on GitHub",
+    "text": "Elsewhere on GitHub\nProjects that live in their own repositories — some with their own deployed sites:\n\n\n\nUtah Housing Project\nSTAT 386 final project — its own Quarto site with docs, tutorial, and a technical report. Also archived in research/utah-housing.\nLive site · Repo\nPython Quarto Live site\n\n\n\n\nStat 386 Portfolio\nThe Quarto portfolio site this one grew out of — includes the original blog posts now ported under Articles.\nLive site · Repo\nQuarto Live site\n\n\n\n\nGC Analysis\nThe upstream repo for the GC Analysis project — the monorepo copy is the fuller local version.\nRepo\nPython NLP\n\n\n\n\nStat 386 Project Example\nEarly STAT 386 work — General Conference analysis notebook, predecessor to the GC Analysis project.\nRepo\nPython Jupyter",
+    "crumbs": [
+      "Home",
+      "Projects"
+    ]
+  },
+  {
+    "objectID": "projects/cs111-daily-tasks.html",
+    "href": "projects/cs111-daily-tasks.html",
+    "title": "Daily Tasks App",
+    "section": "",
+    "text": "An early personal project: menus, task storage in SQLite (Stock_Data.db), import utilities, and an insights view — the first iteration of the “personal data” idea this whole monorepo now runs on.\n\nCode: private — available on request\nPython SQLite",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "Daily Tasks App"
+    ]
+  },
+  {
+    "objectID": "resume.html",
+    "href": "resume.html",
+    "title": "Resume",
+    "section": "",
+    "text": "Download PDF"
+  },
+  {
+    "objectID": "resume.html#education",
+    "href": "resume.html#education",
+    "title": "Resume",
+    "section": "Education",
+    "text": "Education\nB.S. Statistics: Data Science — Brigham Young University, Sep 2023 – Apr 2027 Minors: Information Systems, Mathematics\nCoursework: Calculus 1 & 2, Linear Algebra, Statistical Modeling 1 & 2, Probability and Inference 1 & 2, Principles of Accounting, Principles of Finance, Econ Principles & Problems."
+  },
+  {
+    "objectID": "resume.html#experience",
+    "href": "resume.html#experience",
+    "title": "Resume",
+    "section": "Experience",
+    "text": "Experience\n\nData Analyst Intern — ProdataKey\nDraper, UT · May 2026 – Aug 2026\n\nGathered requirements from Sales leadership and built a multi-window OLS trend engine on monthly dealer-growth data to classify Slowing, Recovering, and Dormant accounts; validated with unit tests\nShipped an end-to-end dbt + Snowflake pipeline (SQL macros, Snowpark Python, incremental history, latest views) with schema tests\nDelivered Tableau dashboards on precomputed Snowflake trend data — list, detail, and timeline views joined to Salesforce dealer dimensions\nImplemented PII tagging in dbt by classifying sensitive fields in sources and seeds, supporting the organization’s SOC 2 privacy processes\n\n\n\nResearch Assistant — BYU Marriott School of Business (Strategic Management)\nProvo, UT · Apr 2025 – May 2026\n\nAnalyzed cooperative-research survey data with multinomial and ordinal logistic regression, producing insights on employee perceptions of AI\nMigrated a large-scale database from Snowflake to a Linux-based university supercomputer\nProofread statistical components of curriculum materials and research articles\n\n\n\nComputer Programmer (Front-End) — BYU Marriott School of Business (ILABZ)\nProvo, UT · Mar 2024 – Apr 2025\n\nBuilt React components in TypeScript on a seven-member development team\nBuilt and maintained five learning-oriented web applications teaching markets and trade between cultures"
+  },
+  {
+    "objectID": "resume.html#leadership-service",
+    "href": "resume.html#leadership-service",
+    "title": "Resume",
+    "section": "Leadership & Service",
+    "text": "Leadership & Service\n\nVolunteer Representative — The Church of Jesus Christ of Latter-day Saints\nRaleigh, NC · Aug 2021 – Aug 2023\n\nServed for two years supporting community organizations and individuals in need; managed social media initiatives"
+  },
+  {
+    "objectID": "resume.html#skills",
+    "href": "resume.html#skills",
+    "title": "Resume",
+    "section": "Skills",
+    "text": "Skills\n\n\nLanguages\nPython · R · SQL · VBA · TypeScript\n\n\nPlatforms & tools\ndbt · Snowflake · Tableau · AWS · Git/GitHub · SQLite · Linux\n\n\nPython\nPandas · NumPy · SciPy · Matplotlib · BeautifulSoup · openpyxl\n\n\nReporting\nQuarto · Jupyter · Microsoft Office (Word, Excel, PowerPoint)\n\n\nBYU clubs: Statistics Association, Data Science Association, Artificial Intelligence Association."
+  },
+  {
+    "objectID": "resume.html#contact",
+    "href": "resume.html#contact",
+    "title": "Resume",
+    "section": "Contact",
+    "text": "Contact\n\nEmail: matthewdavidconger@gmail.com\nPhone: (801) 979-2539\nGitHub: github.com/congerm\nLinkedIn: linkedin.com/in/conger-matthew"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Matthew Conger",
+    "section": "",
+    "text": "Statistics major at BYU, graduating April 2027. I collect messy data, structure it, and use it to answer real questions.\nSee my projects Read my articles\nMount Timpanogos — Brian Smith, CC BY-SA 3.0"
+  },
+  {
+    "objectID": "index.html#about-me",
+    "href": "index.html#about-me",
+    "title": "Matthew Conger",
+    "section": "About me",
+    "text": "About me\nI’m a Statistics major (Data Science emphasis) at BYU, graduating April 2027.\nThis past summer I interned at ProdataKey as a data analyst. My main project was a dbt + Snowflake pipeline that classifies dealer accounts by growth trend, with Tableau dashboards on top for the sales team. Before that I spent a year as a research assistant in the Marriott School of Business — mostly logistic regression on survey data about how employees perceive AI. Before that, a year on a seven-person front-end team at the business school writing React and TypeScript.\nThe common thread is that I like the whole process: getting data that wasn’t meant to be analyzed, cleaning it properly, and ending with an answer someone can use. Apps and pipelines are under Projects; the longer write-ups are under Articles. Everything lives in a private monorepo that also runs the Supabase + dbt data platform underneath the ongoing work."
+  },
+  {
+    "objectID": "index.html#what-i-work-with",
+    "href": "index.html#what-i-work-with",
+    "title": "Matthew Conger",
+    "section": "What I work with",
+    "text": "What I work with\n\n\nData engineering\ndbt · Snowflake · Postgres/Supabase · Tableau · GitHub Actions · ingestion pipelines · web scraping\n\n\nAnalysis & modeling\nPython (pandas/polars, scikit-learn) · R (tidyverse, gamlss, Prophet) · regression · time series · functional data analysis\n\n\nCommunication\nQuarto · technical writing · RevealJS slides · Matplotlib/Seaborn · ggplot2\n\n\nTools\nGit/GitHub · Jupyter · Excel/VBA · uv · Streamlit"
+  },
+  {
+    "objectID": "index.html#featured-work",
+    "href": "index.html#featured-work",
+    "title": "Matthew Conger",
+    "section": "Featured work",
+    "text": "Featured work\n\n\n\nPost-Earnings Drift\nDo S&P 500 prices fully adjust on filing day? A technical report applying functional data analysis to SEC filing windows, 2015–2025.\nStatistics Finance R\n\n\n\n\nGC Analysis\nScraping + NLP embeddings over decades of General Conference talks, with its own Quarto site and Streamlit app.\nPython NLP Quarto\n\n\n\n\nData Platform\nA working warehouse on Supabase Postgres — raw file and API ingestion, dbt staging/intermediate/marts, migrations, scheduled runs.\ndbt Supabase"
+  },
+  {
+    "objectID": "platform.html",
+    "href": "platform.html",
+    "title": "Data Platform",
+    "section": "",
+    "text": "The data/ section of the monorepo is a small but real warehouse stack."
+  },
+  {
+    "objectID": "platform.html#flow",
+    "href": "platform.html#flow",
+    "title": "Data Platform",
+    "section": "Flow",
+    "text": "Flow\ndata/acquisition/&lt;project&gt;/   ──(downloads / scrapes)──▶  data/DATA/&lt;source&gt;/\n                                                            │  uv run ingest\n                                                            ▼\nSupabase:  raw_&lt;source&gt;.*  →  staging (stg_*, views)  →  intermediate (int_*)\n                                                            │\n                                                            ▼\n                                        marts (fct_* / dim_* tables)"
+  },
+  {
+    "objectID": "platform.html#pieces",
+    "href": "platform.html#pieces",
+    "title": "Data Platform",
+    "section": "Pieces",
+    "text": "Pieces\n\n\n\n\n\n\n\n\nComponent\nPath\nWhat it does\n\n\n\n\nDrop zone\ndata/DATA/\nLocal files per source; contents gitignored\n\n\nAcquisition\ndata/acquisition/\nDownloader/scraper projects (e.g. post-earnings-drift)\n\n\nIngestion\ndata/ingestion/\nLoads files + APIs into raw_*, logs runs to meta.ingestion_runs\n\n\ndbt\ndata/dbt/\nstg_/int_/fct_/dim_ layers; dev/ci/prod targets\n\n\nMigrations\ndata/supabase/migrations/\nVersioned DDL for the warehouse"
+  },
+  {
+    "objectID": "platform.html#conventions",
+    "href": "platform.html#conventions",
+    "title": "Data Platform",
+    "section": "Conventions",
+    "text": "Conventions\n\nStaging models are 1:1 with raw tables — rename + cast only.\nMarts are the analytics layer: fct_ for events, dim_ for entities.\ndev target builds into dev_&lt;user&gt;_* schemas; prod builds into bare staging/intermediate/marts on merge or the nightly GitHub Action.\n\nSource is private — available on request."
+  },
+  {
+    "objectID": "login.html",
+    "href": "login.html",
+    "title": "Data Portal — Sign In",
+    "section": "",
+    "text": "Sign in\nAccess the data platform: stock prices, filings & events, the news corpus, and upcoming datasets. Access is tiered — guests get base permission; signed-in users see what their account allows.\n\nEmail \nPassword \n\nSign in\n\n\n\n\n\nor\n\nContinue as guest\n\nGuest access is limited to base (public) data views."
+  },
+  {
+    "objectID": "projects/gc-analysis.html",
+    "href": "projects/gc-analysis.html",
+    "title": "GC Analysis",
+    "section": "",
+    "text": "STAT 386 final project. A full data-acquisition-to-analysis pipeline:\n\nScrapes talk pages from the Church website (title, speaker, role, kicker, full text, year, conference session)\nCleans speaker roles into short labels\nGenerates embeddings with Ollama for similarity search\nShips a Quarto website and a streamlit_app.py front end\n\n\n\n\nSource: streamlit_app.py · gc_analysis.ipynb\nPython bs4 Ollama Streamlit Quarto\n\n\n\n\nData: gc_talks.csv lives in the platform drop zone (data/DATA/gc-talks/) and loads into raw_gc_talks via the ingestion package.\nData Acquisition\n\n\n\nThe project also exists upstream at Congerm/gc_analysis; the copy here is the fuller local version including the site files.",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "GC Analysis"
+    ]
+  },
+  {
+    "objectID": "projects/is303-excel-grades.html",
+    "href": "projects/is303-excel-grades.html",
+    "title": "Excel Grade Formatter (IS 303)",
+    "section": "",
+    "text": "A one-script utility written with a team for IS 303: reads messy grade-export workbooks and emits reformatted, organized Excel files via openpyxl.\n\nSource: p2_formatting_grades_in_excel.py\nPython openpyxl Group",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "Excel Grade Formatter (IS 303)"
+    ]
+  },
+  {
+    "objectID": "projects/post-earnings-drift.html",
+    "href": "projects/post-earnings-drift.html",
+    "title": "Post-Earnings Drift Data Acquisition",
+    "section": "",
+    "text": "The data-acquisition project: pulls daily prices and SEC filing events for hundreds of tickers and combines them into analysis-ready tables (Combined_Data/). This is the “collector” style project that feeds the warehouse — its outputs map onto data/DATA/ sources.\n\nRepo (submodule at data/acquisition/post-earnings-drift): Congerm/Data_Acquisition_Post-Earning_Drift\nThe dataset this pipeline produces feeds the PEAD technical report and the FDA analysis.\nData Acquisition Python yfinance SEC",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "Post-Earnings Drift Data Acquisition"
+    ]
+  },
+  {
+    "objectID": "projects/utah-housing.html",
+    "href": "projects/utah-housing.html",
+    "title": "Utah Housing Analysis",
+    "section": "",
+    "text": "An end-to-end look at Utah housing data: cleaning, exploration, and modeling in utah_housing_analysis.ipynb, wrapped by app.py for interactive use.\n\nLive site: congerm.github.io/Utah_Housing_Project\nSource: app.py · utah_housing_analysis.ipynb · full repo\nPython EDA uv",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "Utah Housing Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/blog-data-acquisition.html",
+    "href": "articles/blog-data-acquisition.html",
+    "title": "Data Acquisition For Reporting Analysis",
+    "section": "",
+    "text": "This data comes from two main sources. I used Yahoo Finance’s API system to get historic data for all companies currently traded on the NASDAQ stock exchange. The other key element of this dataset is the dates that these companies filed their annual and quarterly reports, to get this I used the SEC EDGAR API system as well as a smaller API to convert ticker symbol (unique stock identifiers) into CIKs (a numeric unique identifier) so that I could request data from the SEC system.\nI then combined and summarized these two sources into one large dataset which I will use to answer my question.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Data Acquisition For Reporting Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/blog-data-acquisition.html#introduction",
+    "href": "articles/blog-data-acquisition.html#introduction",
+    "title": "Data Acquisition For Reporting Analysis",
+    "section": "",
+    "text": "This data comes from two main sources. I used Yahoo Finance’s API system to get historic data for all companies currently traded on the NASDAQ stock exchange. The other key element of this dataset is the dates that these companies filed their annual and quarterly reports, to get this I used the SEC EDGAR API system as well as a smaller API to convert ticker symbol (unique stock identifiers) into CIKs (a numeric unique identifier) so that I could request data from the SEC system.\nI then combined and summarized these two sources into one large dataset which I will use to answer my question.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Data Acquisition For Reporting Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/blog-data-acquisition.html#motivating-question",
+    "href": "articles/blog-data-acquisition.html#motivating-question",
+    "title": "Data Acquisition For Reporting Analysis",
+    "section": "Motivating Question",
+    "text": "Motivating Question\n\nDo stock prices fully adjust on the day of an earnings announcement, or is there post-earnings drift?\n\nWhen companies announce their earnings, this has a direct effect on the stock price. For a long time it was accepted that this had an effect over the course of a few weeks after the report was published, this is what the post-earnings drift refers to. In more recent times due to the speed that the internet allows these reports to circulate, there are opinions that this adjustment is now absorbed into the stock price much more quickly (in this case synonymous with efficiently) some even believe that the price adjustment happens within the first day.\nMy aim is to compare the time of adjustment between pre 2010 markets and 2010-2025 markets to find if there is a statistically significant difference between the two.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Data Acquisition For Reporting Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/blog-data-acquisition.html#data-sources",
+    "href": "articles/blog-data-acquisition.html#data-sources",
+    "title": "Data Acquisition For Reporting Analysis",
+    "section": "Data Sources",
+    "text": "Data Sources\nThis project uses two primary data sources:\n\nSEC EDGAR API – used to obtain filing dates\n\nYahoo Finance API – used to obtain historical stock price data\n\nBoth data sources are widely used in financial research and are publicly accessible.\nI also made sure to follow the guidelines given in the API documentation for each to make sure everything was as it should be. Also the fact that they have APIs in place is evidence that they want this data to be accessible.\n\nSEC EDGAR API\nThe U.S. Securities and Exchange Commission has an API available to access the data from their EDGAR system I used it to get:\n\nfiling types (10-K, 10-Q, etc.)\nfiling dates\n\nSEC EDGAR API Documentation\n\n\nYahoo Finance\nYahoo Finance is where I got my historic data. It is a bit different since instead of using the normal requests package, Yahoo Finance has their own Python package to request data.\nyfinance GitHub Repository\n\n\n\nStoring the data\nFor the historic stock market data, I saved each company’s data as its own CSV where the name was ticker.csv so I could look through the directory and get any companies information.\nFor the filing dates, I saved the data in a JSON file with each company ticker as an object with two objects inside it with the two types of documents filed and a list of the dates those were filed.\n\n\n\nCombine the Datasets\nTo combine the data I loaded the JSON file with the filing dates then looped through each ticker, and for each one, I retrieved the associated csv file containing the data for that company. Then for each company I went through each filing date.\nFor each filing date I found 5 values: -The percent change in stock price on that day -The percent change in stock price on the next day -The average percent change in stock price from 2 to 4 days after -The average percent change in stock price from 5 to 10 days after -The average percent change in stock price from 11 to 30 days after\nEach one is a column along with the company ticker and the filing date.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Data Acquisition For Reporting Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/blog-data-acquisition.html#overview-of-the-final-dataset",
+    "href": "articles/blog-data-acquisition.html#overview-of-the-final-dataset",
+    "title": "Data Acquisition For Reporting Analysis",
+    "section": "Overview of the Final Dataset",
+    "text": "Overview of the Final Dataset\n\nDataset Size\n\nRows: 186,386\nColumns: 7",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Data Acquisition For Reporting Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/blog-data-acquisition.html#data-dictionary",
+    "href": "articles/blog-data-acquisition.html#data-dictionary",
+    "title": "Data Acquisition For Reporting Analysis",
+    "section": "Data Dictionary",
+    "text": "Data Dictionary\nBelow is a simplified description of combined data.\n\n\n\n\n\n\n\nFeature\nDescription\n\n\n\n\nticker\nStock ticker symbol\n\n\nfiling_date\nDate the filing was submitted to the SEC\n\n\nclose_pct_day0\nThe percent change in stock price on the day of filing\n\n\nclose_pct_day1\nThe percent change in stock price on the day after filing\n\n\nmean_close_pct_days2_4\nThe average percent change in stock price from 2 to 4 days after filing\n\n\nmean_close_pct_days5_10\nThe average percent change in stock price from 5 to 10 days after filing\n\n\nmean_close_pct_days11_30\nThe average percent change in stock price from 11 to 30 days after filing",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Data Acquisition For Reporting Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/blog-data-acquisition.html#data-cleaning-and-transformations",
+    "href": "articles/blog-data-acquisition.html#data-cleaning-and-transformations",
+    "title": "Data Acquisition For Reporting Analysis",
+    "section": "Data Cleaning and Transformations",
+    "text": "Data Cleaning and Transformations\nTo make the data easy to use I did the following:\n-convert the JSON files to CSVs -Made sure all dates were the same format -Filtered filing types, only including quarterly and annual reports",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Data Acquisition For Reporting Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/blog-data-acquisition.html#data-quality-considerations",
+    "href": "articles/blog-data-acquisition.html#data-quality-considerations",
+    "title": "Data Acquisition For Reporting Analysis",
+    "section": "Data Quality Considerations",
+    "text": "Data Quality Considerations\n\nMissing Data\n\ncompanies may have incomplete historical price data\nnot all companies started at the same time so some have data going much farther back\n\n\n\nCoverage\nThe dataset only has companies who are traded on the NASDAQ, have historic data available, and file with the SEC.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Data Acquisition For Reporting Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/blog-data-acquisition.html#reproducibility-and-code",
+    "href": "articles/blog-data-acquisition.html#reproducibility-and-code",
+    "title": "Data Acquisition For Reporting Analysis",
+    "section": "Reproducibility and Code",
+    "text": "Reproducibility and Code\nAll code used to get the data is available here:\nGitHub Repository – Project Code\nThe repository includes:\n\nAPI data collection scripts\ncleaning and transformation steps\ndataset generation code\n\nIf you’re interested in building similar datasets can use this code as a starting point.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Data Acquisition For Reporting Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/blog-data-acquisition.html#further-resources",
+    "href": "articles/blog-data-acquisition.html#further-resources",
+    "title": "Data Acquisition For Reporting Analysis",
+    "section": "Further Resources",
+    "text": "Further Resources\nIf you want to explore these data sources further, the following resources are helpful:\n\nSEC EDGAR Company Filings\nSEC API Documentation\nyfinance Python Library\n\nThese tools make it possible to build powerful financial datasets with relatively little infrastructure.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Data Acquisition For Reporting Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/blog-data-acquisition.html#conclusion",
+    "href": "articles/blog-data-acquisition.html#conclusion",
+    "title": "Data Acquisition For Reporting Analysis",
+    "section": "Conclusion",
+    "text": "Conclusion\nThis project shows how accessible data is and how we can aggregate many files to create a unique dataset and gain greater insight into new topics.",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Data Acquisition For Reporting Analysis"
+    ]
+  },
+  {
+    "objectID": "articles/pead-report.html",
+    "href": "articles/pead-report.html",
+    "title": "Post-Earnings Announcement Drift in S&P 500 Companies, 2015–2025",
+    "section": "",
+    "text": "Do stock prices fully adjust on the day of an earnings announcement, or does a measurable post-announcement window remain? This report examines the behavior of stock-return variance in the days surrounding SEC quarterly and annual filings for S&P 500 companies from 2015 to 2025, applying the cumulative sum of squares methodology of Inclan & Tiao (1994) within a functional data framework.\nWritten as the final project for BYU’s advanced technical-writing course — a professionally formatted analytical report with a letter of transmittal, executive summary, figures, and an MLA 9 bibliography.\n\n\n\nRead it: Full report (PDF)\nAnalysis code is private — available on request. pead_analysis.R reproduces every figure.\nStatistics Finance R Technical Writing\n\n\n\n\nThe supporting pipeline: filing dates and prices come from the Post-Earnings Drift data acquisition project; the functional-data analysis is written up separately in FDA — Filings & Intraday Returns.\nData Acquisition SEC EDGAR",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Post-Earnings Announcement Drift in S&P 500 Companies, 2015–2025"
+    ]
+  },
+  {
+    "objectID": "articles/stat330-housing.html",
+    "href": "articles/stat330-housing.html",
+    "title": "Housing Regression (STAT 330)",
+    "section": "",
+    "text": "Full regression workflow: EDA, model reduction (model_reduction.R), assumption checking, and a rendered Quarto report (Stat_330_Final_Project.qmd).\n\nSource: Stat_330_Final_Project.qmd · model_reduction.R\nR Regression Quarto",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Housing Regression (STAT 330)"
+    ]
+  },
+  {
+    "objectID": "articles/stat469-education.html",
+    "href": "articles/stat469-education.html",
+    "title": "Education Data Article",
+    "section": "",
+    "text": "A written statistical investigation piece: data exploration, modeling, and a polished PDF article (Education-Article.pdf).\n\nArticle: Education-Article.pdf\nSource: Education Article.qmd\nR Quarto Report",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Education Data Article"
+    ]
+  },
+  {
+    "objectID": "articles/stat495r-fda.html",
+    "href": "articles/stat495r-fda.html",
+    "title": "Functional Data Analysis — Filings & Intraday Returns",
+    "section": "",
+    "text": "Treats intraday price paths as functions rather than points: functional principal components analysis and functional regression on SEC filing event windows.\nThe two raw datasets (83MB + 18MB) live in the platform drop zone at data/DATA/sec-filings/ so they can be ingested into raw_sec_filings — see DATA-MOVED.md in the project folder.\n\nReport: 495report_final.pdf\nCode: analysis code is private — available on request\nThe companion technical-writing version of this study is the PEAD report.\nR Quarto FDA Finance",
+    "crumbs": [
+      "Home",
+      "Articles",
+      "Functional Data Analysis — Filings & Intraday Returns"
+    ]
+  }
+]

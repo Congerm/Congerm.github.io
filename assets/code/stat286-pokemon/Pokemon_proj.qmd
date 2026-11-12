@@ -1,0 +1,407 @@
+---
+title: "Pokemon_Proj"
+format: html
+editor: visual
+execute:
+  warning: false
+  message: false
+---
+
+## Load Necessary Packages
+
+```{r}
+library(RMySQL) ## May also need odbc package
+library(gtExtras) ## For making pretty tables
+library(scales) ## Allows dollar ($) formatting
+library(dplyr) ## Facilitates data manipulation
+library(readr) ## Facilitates reading tabular into R
+library(ggplot2) ## Fancy graphics
+library(reticulate) ## Allows switching between R and Python
+
+use_virtualenv("r-reticulate", required = TRUE)
+#initializes my python enviroment for later
+
+```
+
+## Connect to Database
+
+The following code uses dbConnect to connect to the Pokemon database on the statdb.byu.edu host.
+
+```{r}
+mydb <- dbConnect(MySQL(), user='stat286', password='Cougars24!', dbname='Pokemon', host='statdb.byu.edu')
+
+```
+
+## Instructions 1 & 2: Select Random Trainer and 6 Pokemon
+
+The following code selects one trainer at random and six pokemon according to a specific process.
+
+```{r}
+## Select one trainer at random from the Trainers table ## add code ##
+query.trainer <- "SELECT * FROM Trainers ORDER BY RAND() LIMIT 1"
+selected_trainer <- dbGetQuery(mydb, query.trainer)
+
+## Make a list of Pokemon from the pokemon table with type = "bug" and speed > 55. Order the list by defense (ascending) and then by name (descending). Select the first six Pokemon from that list.
+query.Pokemon <- "SELECT * FROM Pokemon WHERE type1 = 'bug' and speed > 55 ORDER BY defense, name DESC LIMIT 6"
+selected_pokemon <- dbGetQuery(mydb, query.Pokemon)
+```
+
+The following code creates data tables all_pokemon and all_trainers.
+
+```{r}
+all_pokemon <- dbReadTable(mydb, "Pokemon")
+all_trainers <- dbReadTable(mydb, "Trainers")
+```
+
+## Instruction 3: Assign random levels to Pokemon
+
+The following code generates pokemon levels from a uniform distribution between 30 and 100 for each of your six selected pokemon.
+
+```{r}
+#set.seed(42)  # Set seed for reproducibility (removed after testing)
+
+selected_pokemon$Level <- round(runif(6, min=30,max=100))
+## complete the runif function ##
+```
+
+## Instruction 4: Query Pokémart data and output to .csv file
+
+```{r}
+# Query PokéMart data
+pokemart_df <- dbReadTable(mydb, "PokeMart")
+
+# Write the PokéMart data to a CSV file
+## complete the write.csv function ##
+write.csv(pokemart_df, "PokemartData.csv", row.names = F)
+```
+
+## Instruction 5: Construct histograms
+
+```{r}
+# Read PokéMart data
+pokemart_data <- read.csv("./PokemartData.csv")
+
+Potions_Plot = qplot(potions, data=pokemart_data, geom="histogram")
+ggsave(Potions_Plot,file="Potions_Plot.pdf")
+
+
+hist(pokemart_data$potions, xlab = "Potions", main = "Distribution of Potions")
+
+
+## Do the same as above to make histograms for Great Balls and Ultra Balls ##
+
+#Great Balls
+
+Great_Ball_Plot = qplot(great_balls, data=pokemart_data, geom="histogram")
+ggsave(Great_Ball_Plot,file="Great_Ball_Plot.pdf")
+
+
+hist(pokemart_data$great_balls, xlab = "Great Balls", main = "Distribution of Great Balls")
+
+
+
+#Ultra Balls
+Ultra_Ball_Plot = qplot(ultra_balls, data=pokemart_data, geom="histogram")
+ggsave(Ultra_Ball_Plot,file="Ultra_Ball_Plot.pdf")
+
+
+hist(pokemart_data$ultra_balls, xlab = "Ultra Balls", main = "Distribution of Ultra Balls")
+
+
+
+# Create histograms for potions, Pokéballs, great balls, and ultra balls purchased by trainers
+histogram_plot <- ggplot(pokemart_data, aes(x = potions)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black") +
+  ggtitle("Distribution of Potions Purchased")
+
+# Save the histogram as a .png file
+ggsave("Potions_Histogram.png", plot = histogram_plot)
+
+## Repeat for Pokéballs, Great Balls, and Ultra Balls ##
+
+#Pokeballs
+pokeball_histogram <- ggplot(pokemart_data, aes(x = pokeballs)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black") +
+  ggtitle("Distribution of Pokeballs Purchased")
+
+# Save the histogram as a .png file
+ggsave("Pokeballs_Histogram.png", plot = pokeball_histogram)
+
+#Great Balls
+histogram_plot3 <- ggplot(pokemart_data, aes(x = great_balls)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black") +
+  ggtitle("Distribution of great balls Purchased")
+
+# Save the histogram as a .png file
+ggsave("great_balls_Histogram.png", plot = histogram_plot3)
+
+#Ultra balls
+histogram_plot4 <- ggplot(pokemart_data, aes(x = ultra_balls)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black") +
+  ggtitle("Distribution of Ultra Balls Purchased")
+
+# Save the histogram as a .png file
+ggsave("ultra_balls_Histogram.png", plot = histogram_plot4)
+
+
+
+# Scatter plot of Pokémon attack and defense stats
+scatter_plot <- ggplot(selected_pokemon, aes(x = attack, y = defense, color = type1)) +
+  geom_point(size = 3) +
+  ggtitle("Scatter Plot of Pokémon Attack and Defense Stats") +
+  labs(color = "Main Type")
+
+# Save scatter plot as .png file
+ggsave("Pokemon_Scatter_Plot.png", plot = scatter_plot)
+histogram_plot
+pokeball_histogram
+scatter_plot
+
+```
+
+## Instruction 6: Write three Python functions
+
+The first function calculates the number of legendary Pokemon. The second function calculates the number of gym leaders. The third function calculates the total sales of all Pokemart items.
+
+```{r}
+modifiers <- dbReadTable(mydb, "Modifiers")
+pokemart_df <- dbReadTable(mydb, "PokeMart")
+
+dbDisconnect(mydb) ## Disconnect database
+
+
+```
+
+```{python}
+import pandas as pd
+import math
+import random
+```
+
+```{python}
+# Convert the R dataframe into a Python pandas dataframe
+## complete the following code ##
+pokemon_df = r.all_pokemon
+trainer_df = r.all_trainers
+pokemart_df = r.pokemart_df
+modifiers_df = r.modifiers
+# Check the first few rows of the dataframe
+pokemon_df.head()
+
+```
+
+```{python}
+
+# Function 1: Calculate the number of legendary Pokémon by type (both main and secondary types)
+def count_legendary_pokemon(df):
+    # Filter for legendary Pokémon and group by Type1 and Type2
+    type_1_count = df[df['legendary'] == 1].groupby(['type1']).size().reset_index(name='Type_1_Legendary_Count')
+    type_2_count = df[df['legendary'] == 1].groupby(['type2']).size().reset_index(name='Type_2_Legendary_Count')
+    return type_1_count, type_2_count
+
+
+# Function 2: Calculate the number of gym leaders
+def count_gym_leaders(df):
+    gym_leader_count = df[df['gym_leader'] == "Yes"].shape[0]
+    return gym_leader_count
+
+# Function 3: Calculate the total sales of PokéMart items
+def total_sales(df):
+    total_sales_value = sum(df['total_sale'])
+    return total_sales_value
+
+# Running the functions with the passed dataframes
+legendary_counts = count_legendary_pokemon(pokemon_df)
+gym_leader_count = count_gym_leaders(trainer_df)
+sales_total = total_sales(pokemart_df)
+
+print("Legendary Pokémon Counts by Type 1:")
+print(legendary_counts[0])
+print("Legendary Pokémon Counts by Type 2:")
+print(legendary_counts[1])
+print("\nNumber of Gym Leaders:")
+print(gym_leader_count)
+print("\nTotal Sales of PokéMart Items:")
+print(sales_total)
+
+```
+
+## Instruction 7: Calculate stats for each Pokemon at level 100 and identify the strongest Pokemon
+
+```{python}
+# Step 1: Identify the data
+level_100_multipliers = modifiers_df.loc[99].iloc[1:6]  # Columns 2-6
+
+# Step 2: Select the corresponding columns (5 to 10) from the pokemon dataframe
+pokemon_features_to_multiply = pokemon_df.iloc[:, 4:9]  # Columns 5-10
+
+# Step 3: Multiply the relevant columns (element-wise) ## complete Step 3 ##
+pokemon_scaled = pokemon_features_to_multiply.mul(level_100_multipliers.values)
+
+# Step 4: Replace the original columns with the scaled values
+pokemon_df.iloc[:, 4:9] = pokemon_scaled
+```
+
+```{python}
+# Step 1: Identify the data
+stats_columns = pokemon_df.iloc[:, 4:9]
+
+# Step 2: Calculate the percentile for each stat column ## Complete Step 2 ##
+percentiles = stats_columns.rank(pct=True)
+
+# Step 3: Calculate the average percentile for each Pokémon
+pokemon_df['average_percentile'] = percentiles.mean(axis=1)
+
+# Step 4: Identify the Pokémon with the highest average percentile
+strongest_pokemon = pokemon_df.loc[pokemon_df['average_percentile'].idxmax()]
+print(strongest_pokemon)
+```
+
+## Instruction 8: Simulate Pokemon battle
+
+```{python}
+# Convert R dataframe to Python (add code)
+pokemon_df = r.all_pokemon
+trainer_df = r.all_trainers
+
+```
+
+```{python}
+## !!!! THIS SECTION IS COMPLETE. NO NEED TO EDIT !!!! ##
+
+
+#Battle Function
+
+# Function to retrieve Pokémon stats
+def get_pokemon(name):
+    if pd.isna(name):  # If the trainer has no Pokémon left
+        return None
+    pokemon = pokemon_df[pokemon_df['name'] == name]
+    if pokemon.empty:
+        raise ValueError(f"Pokémon '{name}' not found in the data.")
+    return pokemon.iloc[0]
+
+# Function to simulate an attack
+def attack(attacker, defender, use_special=False):
+    if use_special:
+        attack_stat = attacker['special_attack']
+        defense_stat = defender['special_defense']
+    else:
+        attack_stat = attacker['attack']
+        defense_stat = defender['defense']
+
+    # Calculate damage based on the formula provided
+    damage = max(0, attack_stat - math.ceil(defense_stat / 4))
+    return damage
+
+# Function to simulate a battle between two Pokémon
+def battle(pokemon1, pokemon2):
+    hp1 = pokemon1['hp']
+    hp2 = pokemon2['hp']
+
+    special1_used = 0
+    special2_used = 0
+
+    # Determine who attacks first based on speed
+    speed1 = pokemon1['speed']
+    speed2 = pokemon2['speed']
+
+    first_attacker = None
+    if speed1 > speed2:
+        first_attacker = pokemon1
+    else:
+        first_attacker = pokemon2
+
+    # Battle loop
+    while hp1 > 0 and hp2 > 0:
+        if first_attacker is pokemon1:
+            # Pokémon 1 attacks first
+            damage = attack(pokemon1, pokemon2)
+            hp2 -= damage
+            if hp2 <= 0:
+                return 1  # Pokémon 1 wins
+
+            # Pokémon 2 attacks
+            damage = attack(pokemon2, pokemon1)
+            hp1 -= damage
+            if hp1 <= 0:
+                return 2  # Pokémon 2 wins
+
+        else:
+            # Pokémon 2 attacks first
+            damage = attack(pokemon2, pokemon1)
+            hp1 -= damage
+            if hp1 <= 0:
+                return 2  # Pokémon 2 wins
+
+            # Pokémon 1 attacks
+            damage = attack(pokemon1, pokemon2)
+            hp2 -= damage
+            if hp2 <= 0:
+                return 1  # Pokémon 1 wins
+
+# Function to simulate a battle between two trainers
+def trainer_battle(trainer1, trainer2):
+    # Extract the list of Pokémon for each trainer, dropping NaN values
+    team1 = [get_pokemon(pokemon) for pokemon in trainer_df[trainer_df['trainer_id'] == trainer1].iloc[0, 2:7] if pd.notna(pokemon)]
+    team2 = [get_pokemon(pokemon) for pokemon in trainer_df[trainer_df['trainer_id'] == trainer2].iloc[0, 2:7] if pd.notna(pokemon)]
+
+    # Each trainer uses the first Pokémon in their team until one faints
+    while len(team1) > 0 and len(team2) > 0:
+        pokemon1 = team1[0]
+        pokemon2 = team2[0]
+
+        # Battle between the first Pokémon
+        result = battle(pokemon1, pokemon2)
+
+        # If Pokémon 1 wins, remove Pokémon 2 from Trainer 2's team
+        if result == 1:
+            team2.pop(0)
+        # If Pokémon 2 wins, remove Pokémon 1 from Trainer 1's team
+        else:
+            team1.pop(0)
+
+    # Determine the winner based on remaining Pokémon
+    if len(team1) > 0:
+        return trainer1
+    else:
+        return trainer2
+
+# Function to run a tournament
+def run_tournament(trainers):
+    round_num = 1
+    while len(trainers) > 1:
+        print(f"Round {round_num} begins!")
+        random.shuffle(trainers)
+        winners = []
+
+        # Match trainers in pairs
+        for i in range(0, len(trainers), 2):
+            trainer1 = trainers[i]
+            trainer2 = trainers[i + 1] if i + 1 < len(trainers) else None
+
+            if trainer2:
+                # Run the battle between trainer1 and trainer2
+                print(f"{trainer1} vs {trainer2}")
+                winner = trainer_battle(trainer1, trainer2)
+                print(f"{winner} wins the battle!")
+                winners.append(winner)
+            else:
+                # If odd number of trainers, the last trainer advances automatically
+                print(f"{trainer1} advances to the next round (no opponent).")
+                winners.append(trainer1)
+
+        trainers = winners
+        round_num += 1
+
+    # The last remaining trainer is the champion
+    print(f"The champion is: {trainers[0]}!")
+    return trainers[0]
+
+# List of trainers
+trainers = list(trainer_df['trainer_id'])
+```
+
+```{python}
+champion = run_tournament(trainers)
+```

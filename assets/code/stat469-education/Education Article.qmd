@@ -1,0 +1,270 @@
+---
+title: "Which degree should I choose?"
+format: pdf
+editor: visual
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r analysis_code}
+# Load packages and data
+library(tidyverse)
+library(patchwork)
+
+salary <- vroom::vroom("../DATA/Salary.csv")
+
+# Set categorical variables
+salary$MajorCategory <- factor(salary$MajorCategory)
+salary$Sex <- factor(salary$Sex)
+
+# Fit the models
+salary_lm <- lm(
+	Salary ~ . + GPA:MajorCategory + MajorCategory:Sex,
+	data = salary
+)
+
+base_lm <- lm(Salary ~ ., data = salary)
+gpa_lm <- lm(Salary ~ GPA * MajorCategory + Sex, data = salary)
+sex_lm <- lm(Salary ~ GPA + MajorCategory * Sex, data = salary)
+
+gpa_test <- anova(base_lm, gpa_lm)
+sex_test <- anova(base_lm, sex_lm)
+
+# Summarize salary by major
+major_summary <- salary %>%
+	group_by(MajorCategory) %>%
+	summarize(
+		median_salary = median(Salary),
+		.groups = "drop"
+	) %>%
+	arrange(median_salary)
+
+salary$MajorCategory <- factor(
+	salary$MajorCategory,
+	levels = major_summary$MajorCategory
+)
+
+# Create article plots
+gpa_plot <- ggplot(salary, aes(x = GPA, y = Salary)) +
+	geom_point(alpha = 0.35, color = "#2F5D62") +
+	geom_smooth(method = "lm", se = FALSE, color = "#D16B45") +
+	scale_y_continuous(labels = scales::dollar_format()) +
+	labs(x = "GPA", y = "Salary") +
+	theme_minimal()
+
+major_plot <- ggplot(salary, aes(x = Salary, y = MajorCategory)) +
+	geom_boxplot(fill = "#86BBD8", color = "#244B5A", outlier.alpha = 0.3) +
+	scale_x_continuous(labels = scales::dollar_format()) +
+	labs(x = "Salary five years after graduation", y = NULL) +
+	theme_minimal()
+
+business_plot <- salary %>%
+	filter(MajorCategory == "Business") %>%
+	ggplot(aes(x = Sex, y = Salary, fill = Sex)) +
+	geom_boxplot(show.legend = FALSE) +
+	scale_y_continuous(labels = scales::dollar_format()) +
+	labs(x = NULL, y = "Salary", title = "Business graduates") +
+	theme_minimal()
+
+# Create prediction data
+business_prediction <- data.frame(
+	GPA = 3.5,
+	MajorCategory = factor(
+		c("Business", "Business"),
+		levels = levels(salary$MajorCategory)
+	),
+	Sex = factor(c("F", "M"), levels = levels(salary$Sex))
+)
+
+business_prediction <- cbind(
+	business_prediction,
+	as.data.frame(predict(salary_lm, business_prediction, interval = "prediction"))
+)
+
+gpa_prediction <- data.frame(
+	GPA = c(2.5, 4),
+	MajorCategory = factor(
+		c("Business", "Business"),
+		levels = levels(salary$MajorCategory)
+	),
+	Sex = factor(c("F", "F"), levels = levels(salary$Sex))
+)
+
+gpa_prediction <- cbind(
+	gpa_prediction,
+	fit = as.numeric(predict(salary_lm, gpa_prediction))
+)
+
+# Check model assumptions
+standardized_residuals <- MASS::stdres(salary_lm)
+diagnostic_data <- data.frame(
+	fitted = fitted(salary_lm),
+	standardized_residuals = standardized_residuals
+)
+
+diagnostic_plot <- (
+	ggplot(diagnostic_data, aes(x = fitted, y = standardized_residuals)) +
+		geom_point(alpha = 0.35) +
+		geom_hline(yintercept = 0) +
+		labs(x = "Fitted salary", y = "Standardized residuals") +
+		theme_minimal()
+) + (
+	ggplot(diagnostic_data, aes(x = standardized_residuals)) +
+		geom_histogram(aes(y = after_stat(density)), bins = 25) +
+		stat_function(fun = dnorm) +
+		labs(x = "Standardized residuals", y = "Density") +
+		theme_minimal()
+)
+
+validation_tests <- data.frame(
+	test = c("Breusch-Pagan", "Kolmogorov-Smirnov"),
+	p_value = c(
+		lmtest::bptest(salary_lm)$p.value,
+		ks.test(standardized_residuals, "pnorm", mean = 0, sd = 1)$p.value
+	)
+)
+
+# Validate predictions
+set.seed(469)
+K <- 10
+folds <- sample(rep(1:K, length.out = nrow(salary)))
+
+cross_validate <- function(fold_num) {
+	train <- salary[folds != fold_num, ]
+	test <- salary[folds == fold_num, ]
+
+	train_lm <- lm(
+		Salary ~ . + GPA:MajorCategory + MajorCategory:Sex,
+		data = train
+	)
+	predictions <- predict(train_lm, newdata = test)
+
+	sqrt(mean((test$Salary - predictions)^2))
+}
+
+cv_rmse <- sapply(1:K, cross_validate)
+cv_mean_rmse <- mean(cv_rmse)
+```
+
+## A degree can open doors, but the major still matters.
+
+The data I used contains 773 graduates and their salaries five years after graduation. The salaries range from about \$49,000 to \$130,000, which is a pretty big spread.
+
+This project looks at what the data shows about GPA, major, sex, and salary. It is not a complete picture of anyone's career because the file only contains those four variables.
+
+## GPA: useful, but not destiny
+
+Grades matter, but probably not in the way that students sometimes fear. GPA is related to salary, but the relationship is not the same for every major. A higher GPA is connected to a larger salary change in some majors than in others, so there is no single GPA story for everyone.
+
+```{r}
+gpa_plot
+```
+
+For example, the model predicts that a female Business graduate with a 2.5 GPA would earn about `r paste0("$", format(round(gpa_prediction$fit[1]), big.mark = ",", scientific = FALSE, trim = TRUE))`. With a 4.0 GPA, the prediction goes up to about `r paste0("$", format(round(gpa_prediction$fit[2]), big.mark = ",", scientific = FALSE, trim = TRUE))`. That is a meaningful difference, but it is not a promise. GPA is only one piece of a much bigger picture.
+
+So, should students be super anxious about grades? I do not think so. Doing well can help, but this data does not say that a transcript controls a person’s future. It says that GPA and major work together, while also leaving out a lot of the things that shape a career.
+
+## Salaries across majors
+
+The clearest difference in this sample is between major categories. Engineering graduates have the highest median salary, while Arts and Education are near the bottom.
+
+```{r}
+major_plot
+```
+
+The median salary for Engineering graduates is `r paste0("$", format(round(major_summary$median_salary[major_summary$MajorCategory == "Engineering"]), big.mark = ",", scientific = FALSE, trim = TRUE))`. For Education graduates, it is `r paste0("$", format(round(major_summary$median_salary[major_summary$MajorCategory == "Education"]), big.mark = ",", scientific = FALSE, trim = TRUE))`, and for Arts graduates it is `r paste0("$", format(round(major_summary$median_salary[major_summary$MajorCategory == "Arts"]), big.mark = ",", scientific = FALSE, trim = TRUE))`.
+
+That difference is real in this dataset, but salary is only one outcome. My main takeaway is that students should understand the financial patterns connected to their options before they commit to them.
+
+## Women and men in the same major
+
+Looking only at the overall average can hide what happens inside a major. In the Business group, women in this sample earned an average of `r paste0("$", format(round(mean(salary$Salary[salary$MajorCategory == "Business" & salary$Sex == "F"])), big.mark = ",", scientific = FALSE, trim = TRUE))`, while men earned an average of `r paste0("$", format(round(mean(salary$Salary[salary$MajorCategory == "Business" & salary$Sex == "M"])), big.mark = ",", scientific = FALSE, trim = TRUE))`.
+
+```{r}
+business_plot
+```
+
+The difference between women and men was not the same in every major. In the Business example, after comparing people at the same GPA of 3.5, the model predicts about `r paste0("$", format(round(business_prediction$fit[1]), big.mark = ",", scientific = FALSE, trim = TRUE))` for women and `r paste0("$", format(round(business_prediction$fit[2]), big.mark = ",", scientific = FALSE, trim = TRUE))` for men.
+
+This is a pattern in the sample but, not an explanation for why the gap exists. The data does not include job title, hours worked, industry, location, experience, or time away from work, so this analysis cannot compare those factors.
+
+## Other factors matter too
+
+The model explains about `r round(summary(salary_lm)$r.squared * 100, 1)`% of the salary differences in this dataset. That is enough to show useful patterns, but it still leaves a lot unexplained.
+
+Here is one example. For a Business graduate with a GPA of 3.5, the model predicts a salary of about `r paste0("$", format(round(business_prediction$fit[1]), big.mark = ",", scientific = FALSE, trim = TRUE))` for a woman. A reasonable range for one person runs from about `r paste0("$", format(round(business_prediction$lwr[1]), big.mark = ",", scientific = FALSE, trim = TRUE))` to `r paste0("$", format(round(business_prediction$upr[1]), big.mark = ",", scientific = FALSE, trim = TRUE))`. That is a wide range, and it shows that a model can identify a typical outcome without knowing exactly what will happen to each person.
+
+Location, job experience, internships, industry, graduate school, networking, and the strength of the job market could all change the result. None of those variables are in this file, so the model cannot use them.
+
+## Conclusion
+
+There is no single answer to the question, “What degree should I choose?” In this sample, major category is strongly connected to salary, and Engineering sits far above Arts and Education five years after graduation. GPA matters too, but its relationship with salary changes depending on the major. The difference between women and men changes across majors as well.
+
+I would not use these numbers to make every life descision. I would use them as helpful information to help make the descisions. Students should look at the financial tradeoffs of a major, keep their expectations realistic, and remember that a salary model cannot measure every reason someone chooses a field.
+
+```{=latex}
+\clearpage
+\pagestyle{empty}
+\null
+\newpage
+\pagestyle{plain}
+```
+
+# Technical Documentation
+
+## 1. Modeling
+
+The response is annual salary five years after graduation. I modeled it with a normal linear model:
+
+$$Y_i \sim N(\mu_i, \sigma^2),$$
+
+where
+
+$$
+\mu_i = \beta_0 + \beta_1 GPA_i + \beta_2 Sex_i
++ \beta_3 MajorCategory_i
++ \beta_4(GPA_i \times MajorCategory_i)
++ \beta_5(Sex_i \times MajorCategory_i).
+$$
+
+Here, $j$ indexes the 15 major categories other than Agriculture and Natural Resources, which is the reference category. Female is the reference category for Sex. The matrix $X$ contains the intercept, GPA, the sex indicator, 15 major indicators, 15 GPA by major interaction columns, and 15 sex by major interaction columns.
+
+The model explained `r round(summary(salary_lm)$r.squared * 100, 1)`% of the observed salary variation, with an adjusted value of `r round(summary(salary_lm)$adj.r.squared * 100, 1)`%. The residual standard deviation was about `r paste0("$", format(round(summary(salary_lm)$sigma), big.mark = ",", scientific = FALSE, trim = TRUE))`.
+
+For validation, I checked the standardized residuals with a fitted value plot and a density comparison, then used a Breusch-Pagan test for changing variance and a Kolmogorov-Smirnov test for normality.
+
+```{r}
+diagnostic_plot
+```
+
+```{r}
+validation_tests
+```
+
+The Breusch-Pagan p-value was `r format.pval(validation_tests$p_value[1], digits = 3, eps = .001)`, so there was not evidence that the residual variance changes. The Kolmogorov-Smirnov p-value was `r format.pval(validation_tests$p_value[2], digits = 3, eps = .001)`, so the standardized residuals did not show a strong difference from a normal curve. These checks do not prove that the model is perfect but, they indicate that the model is reasonable for the broad comparisons in the article.
+
+## 2. Impact of GPA
+
+To write the GPA section, I compared a model with one common GPA slope to a model that allowed the GPA slope to vary by major. The interaction comparison gave an F-test p-value of `r format.pval(gpa_test$"Pr(>F)"[2], digits = 3, eps = .001)`, so I kept the GPA by major interaction in the final model. I used predictions for Business graduates at GPAs of 2.5 and 4.0 to give readers a concrete, understandable example.
+
+## 3. Salaries across majors
+
+I summarized salary by MajorCategory and plotted the distributions with horizontal boxplots. The regression model also included indicator columns for the major categories, so the article’s comparison is supported by both the raw salary distributions and the adjusted model.
+
+## 4. Salaries for women and men
+
+I compared a model with one common sex difference to a model allowing the sex difference to vary by major. The interaction comparison gave a p-value of `r format.pval(sex_test$"Pr(>F)"[2], digits = 3, eps = .001)`, so the final model retained MajorCategory by Sex interactions. The Business example uses the model’s predictions at GPA 3.5, while the plot shows the observed Business salary distributions.
+
+## 5. Other factors and prediction
+
+I used the model $R^2$ to describe how much salary variation was captured by GPA, major, sex, and the interactions. I also split the data into 10 folds, fit the model on nine folds, and predicted the remaining fold. Across those folds, the average prediction error was about `r paste0("$", format(round(cv_mean_rmse), big.mark = ",", scientific = FALSE, trim = TRUE))`. I used `predict()` with `interval = "prediction"` for the Business example. A prediction interval is intentionally wider than an interval for an average because it represents the plausible range for one future graduate.
+
+## AI Use Note
+
+I used AI while working on this project to help me think through which analyses and figures to use, organize the code, and improve the writing. I wrote and ran the code myself, and all of the numbers, model choices, figures, and conclusions came from my R code and the Salary.csv data.
+
+## Appendix: Code
+```{r ref.label = "analysis_code", echo = TRUE, eval = FALSE}
+```

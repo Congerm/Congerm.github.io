@@ -1,0 +1,270 @@
+---
+title: "VistaLux 2025 Growth Projections"
+format:
+  revealjs:
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+# Setup for packages, data, quarter dates, and the predictor matrix
+library(tidyverse)
+library(forecast)
+library(prophet)
+
+growth <- vroom::vroom("../DATA/CompanyGrowth.csv") %>%
+	arrange(Year, Qrtr) %>%
+	mutate(ds = as.Date(paste(Year, (Qrtr - 1) * 3 + 2, "15", sep = "-")))
+
+X <- model.matrix(
+	~ Income + Production + Savings + Unemployment,
+	data = growth
+)[, -1]
+preds <- c("Income", "Production", "Savings", "Unemployment")
+```
+
+## Our approach
+
+- Our current model predicts quarterly growth from four economic indicators.
+- We tested two alternatives to see if they could project better.
+- They help a little, and all three projections tell the same story.
+
+## Our current model
+
+![](model_equation.png){fig-align="center" width="80%"}
+
+- The model is one line per quarter, four indicators in and growth out.
+- It is fit on 198 quarters from 1976 to mid-2025 and explains about 77% of the variation in growth.
+- To project a quarter, we plug that quarter's indicator values into the equation.
+
+## How the current model performs {.smaller .scrollable}
+
+```{r}
+# Current multiple regression on all available quarters
+current_lm <- lm(
+	PctGrowth ~ Income + Production + Savings + Unemployment,
+	data = growth
+)
+
+# Recent-history fit of the last 10 years of actual vs fitted growth
+fit_plot <- ggplot(
+	data.frame(
+		Time = growth$Year + (growth$Qrtr - 1) / 4,
+		Actual = growth$PctGrowth,
+		Fitted = fitted(current_lm)
+	) %>% filter(Time >= 2015),
+	aes(x = Time)
+) +
+	geom_line(aes(y = Actual), color = "#2F5D62", linewidth = 1) +
+	geom_line(aes(y = Fitted), color = "#D16B45", linewidth = 0.9) +
+	labs(x = NULL, y = "Quarterly growth (%)") +
+	theme_minimal()
+
+fit_plot
+```
+
+- The fitted line tracks actual growth closely over the last decade.
+- Its predictions were off by about 0.19 points per quarter on the last four quarters.
+- Under this model, Q3 projects to 0.81% and Q4 to 0.70%.
+- It cannot project a quarter unless the indicator values already exist.
+
+## Why we tested alternatives {.scrollable}
+
+```{r}
+# Residual checks on the current model for variance, normality,
+# and whether quarters are actually independent of each other
+diagnostics <- data.frame(
+	Check = c("Constant variance", "Normal errors", "Independent quarters"),
+	p_value = c(
+		lmtest::bptest(current_lm)$p.value,
+		ks.test(MASS::stdres(current_lm), "pnorm", mean = 0, sd = 1)$p.value,
+		Box.test(residuals(current_lm), lag = 8, type = "Ljung-Box")$p.value
+	)
+)
+knitr::kable(diagnostics, digits = 3, col.names = c("Check", "p-value"))
+```
+
+- Every check we ran on the model's errors came back showing a problem.
+- The big one is that quarters are correlated, and that correlation is what a time series model can take advantage of.
+
+## Alternative 1, regression with time-aware errors {.scrollable}
+
+- This keeps the same equation but lets the errors follow a seasonal ARIMA pattern.
+- A bad quarter now carries information into the next projection.
+- auto.arima selected an ARIMA(2,1,1)(1,0,1)[4] structure for the errors.
+
+```{r}
+# Regression with ARIMA errors where auto.arima picks the error structure
+growth_ts <- ts(growth$PctGrowth, frequency = 4, start = c(1976, 1))
+arima_reg <- auto.arima(y = growth_ts, xreg = X)
+
+coef(arima_reg)
+```
+
+## Alternative 2, Prophet with the same indicators {.smaller .scrollable}
+
+- Prophet draws a smooth trend plus a seasonal curve through the growth history.
+- We feed it the same four indicators as extra inputs.
+- It is built for forecasting, so it handles the calendar directly.
+
+```{r}
+#| fig-width: 9
+#| fig-height: 3.5
+
+# Prophet with the four indicators added as regressors
+growth_prophet <- prophet()
+for (r in preds) {
+	growth_prophet <- add_regressor(growth_prophet, r)
+}
+growth_prophet <- fit.prophet(
+	growth_prophet,
+	data.frame(ds = growth$ds, y = growth$PctGrowth, growth[, preds])
+)
+
+# Prophet fit on the last 10 years, same view as the current model
+prophet_plot <- ggplot(
+	data.frame(
+		Time = growth$Year + (growth$Qrtr - 1) / 4,
+		Actual = growth$PctGrowth,
+		Fitted = predict(growth_prophet, growth[, c("ds", preds)])$yhat
+	) %>% filter(Time >= 2015),
+	aes(x = Time)
+) +
+	geom_line(aes(y = Actual), color = "#2F5D62", linewidth = 1) +
+	geom_line(aes(y = Fitted), color = "#D16B45", linewidth = 0.9) +
+	labs(x = NULL, y = "Quarterly growth (%)") +
+	theme_minimal()
+
+prophet_plot
+```
+
+## Head to head, which predicts best? {.smaller .scrollable}
+
+```{r}
+# Holdout where we train each model through 2024 Q2, predict the last
+# four quarters, and compare typical error
+test_i <- growth$Year > 2024 | (growth$Year == 2024 & growth$Qrtr >= 3)
+
+lm_hold <- lm(
+	PctGrowth ~ Income + Production + Savings + Unemployment,
+	data = growth[!test_i, ]
+)
+pred_lm <- predict(lm_hold, newdata = growth[test_i, ])
+
+arima_reg_hold <- Arima(
+	ts(growth$PctGrowth[!test_i], frequency = 4, start = c(1976, 1)),
+	model = arima_reg, xreg = X[!test_i, ]
+)
+pred_reg <- forecast(arima_reg_hold, xreg = X[test_i, ])$mean
+
+prophet_hold <- prophet()
+for (r in preds) {
+	prophet_hold <- add_regressor(prophet_hold, r)
+}
+prophet_hold <- fit.prophet(
+	prophet_hold,
+	data.frame(ds = growth$ds[!test_i], y = growth$PctGrowth[!test_i],
+			   growth[!test_i, preds])
+)
+pred_ph <- predict(
+	prophet_hold,
+	data.frame(ds = growth$ds[test_i], growth[test_i, preds])
+)$yhat
+
+rmse <- function(actual, pred) sqrt(mean((actual - pred)^2))
+holdout_rmse <- data.frame(
+	Model = c("Current regression", "Regression + ARIMA errors", "Prophet"),
+	RMSE = c(
+		rmse(growth$PctGrowth[test_i], pred_lm),
+		rmse(growth$PctGrowth[test_i], as.numeric(pred_reg)),
+		rmse(growth$PctGrowth[test_i], pred_ph)
+	)
+)
+
+rmse_plot <- ggplot(holdout_rmse, aes(x = RMSE, y = reorder(Model, -RMSE))) +
+	geom_col(fill = c("#999999", "#2F5D62", "#999999"), width = 0.6) +
+	labs(x = "Prediction error (percentage points)", y = NULL) +
+	theme_minimal()
+
+rmse_plot
+```
+
+- On the last four quarters the errors were 0.18 for the ARIMA model, 0.19 for the current model, and 0.20 for Prophet.
+- It is a tight race, but the time-aware errors come out ahead.
+
+## How we get Q3 and Q4 projections {.scrollable}
+
+```{r}
+# Prophet model for each indicator, forecast to the end of 2025
+# (two quarters, Q3 and Q4)
+future_ds <- data.frame(ds = as.Date(c("2025-08-15", "2025-11-15")))
+
+future_X <- sapply(preds, function(v) {
+	pm <- prophet(data.frame(ds = growth$ds, y = growth[[v]]))
+	predict(pm, future_ds)$yhat
+})
+colnames(future_X) <- preds
+future_indicators <- cbind(Quarter = c("Q3", "Q4"), as.data.frame(future_X))
+
+knitr::kable(future_indicators, row.names = FALSE, digits = 2)
+```
+
+- The Q3 and Q4 indicator values do not exist yet, so we forecast them too.
+- Each indicator gets its own Prophet model, projected two quarters out.
+- Every model then uses the same projected inputs.
+
+## What the rest of 2025 looks like {.scrollable}
+
+```{r}
+# Final projections for Q3-Q4 2025 using the forecasted indicators
+future_df <- cbind(future_ds, as.data.frame(future_X))
+
+proj_table <- data.frame(
+	Quarter = c("Q3", "Q4"),
+	"Current regression" = predict(current_lm, newdata = future_df),
+	"Regression + ARIMA" = as.numeric(forecast(arima_reg, xreg = future_X)$mean),
+	"Prophet" = predict(growth_prophet, future_df)$yhat,
+	check.names = FALSE
+) %>%
+	mutate(across(-Quarter, ~ sprintf("%.2f%%", .x)))
+
+knitr::kable(proj_table)
+```
+
+- All three models project growth between 0.57% and 0.81% per quarter.
+- The preferred model says about 0.7% in both quarters.
+
+## What actually drives VistaLux growth {.smaller .scrollable}
+
+```{r}
+# Coefficients from the preferred model (regression + ARIMA errors)
+# showing how much each indicator moves quarterly growth
+drivers <- data.frame(
+	Indicator = preds,
+	Effect = coef(arima_reg)[preds]
+)
+
+driver_plot <- ggplot(
+	drivers,
+	aes(x = Effect, y = reorder(Indicator, Effect), fill = Effect > 0)
+) +
+	geom_col(width = 0.6, show.legend = FALSE) +
+	scale_x_continuous(expand = expansion(mult = 0.1)) +
+	labs(x = "Effect on quarterly growth (percentage points)", y = NULL) +
+	theme_minimal()
+
+driver_plot
+```
+
+- Income dominates, with one extra point of income growth worth about 0.74 points for us.
+- Unemployment and savings pull growth down, while production helps a little.
+- We are a discretionary-goods company, so this pattern tracks.
+
+## Recommendation
+
+- We recommend the regression with ARIMA errors because it did the best job predicting the recent quarters.
+- The rest of 2025 should see steady growth around 0.7% a quarter.
+- Income is the number to watch going forward.

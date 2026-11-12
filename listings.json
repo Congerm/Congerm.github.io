@@ -1,0 +1,28 @@
+[
+  {
+    "listing": "/articles/index.html",
+    "items": [
+      "/articles/blog-apply-vs-vectorized.html",
+      "/articles/blog-data-acquisition.html",
+      "/articles/pead-report.html",
+      "/articles/stat250-clt.html",
+      "/articles/stat330-housing.html",
+      "/articles/stat469-company-growth.html",
+      "/articles/stat469-education.html",
+      "/articles/stat469-food-cost.html",
+      "/articles/stat495r-fda.html"
+    ]
+  },
+  {
+    "listing": "/projects/index.html",
+    "items": [
+      "/projects/cs111-daily-tasks.html",
+      "/projects/gc-analysis.html",
+      "/projects/is303-excel-grades.html",
+      "/projects/is303-hair-salon.html",
+      "/projects/post-earnings-drift.html",
+      "/projects/stat286-pokemon.html",
+      "/projects/utah-housing.html"
+    ]
+  }
+]

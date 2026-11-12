@@ -1,0 +1,265 @@
+---
+title: "Housing Price Prediction Analysis"
+author: |
+  Sujin  \\
+  and \\
+  GROUP MEMBER 2 \\
+  and \\
+  GROUP MEMBER 3
+date: "December 11, 2024"
+output:
+  pdf_document:
+    toc: true
+    number_sections: true
+    highlight: tango
+  html_document:
+    toc: true
+    number_sections: true
+    theme: paper
+    highlight: tango
+abstract: |
+  "Put abstract here"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(multcomp)
+theme_set(theme_bw())
+```
+
+# 1 Introduction
+
+"Put introduction here. Motivate the study, provide background, and state scientific questions."
+
+## Data Description
+
+"Describe the dataset source, observational units, key variables, and units here."
+
+```{r load-data, message=FALSE, warning=FALSE}
+# Load the data
+housing <- read.csv("housing.csv")
+
+# Create reduced dataset similar to class examples
+housing_reduced <- housing %>%
+  select(SalePrice, Gr.Liv.Area, Overall.Qual, Year.Built,
+         Neighborhood, House.Style, Full.Bath, Bedroom.AbvGr,
+         Garage.Cars, Total.Bsmt.SF, Lot.Area) %>%
+  filter(complete.cases(.)) %>%
+  mutate(
+    Neighborhood = factor(Neighborhood),
+    House.Style = factor(House.Style)
+  )
+
+# Optional: set baseline levels to mirror course examples
+housing_reduced <- housing_reduced %>%
+  mutate(
+    Neighborhood = fct_relevel(Neighborhood, "NAmes"),
+    House.Style = fct_relevel(House.Style, "1Story")
+  )
+
+### Exploratory summaries
+
+```{r price-distribution, fig.height=5, fig.width=8, message=FALSE, warning=FALSE}
+housing_reduced %>%
+  select(SalePrice, Gr.Liv.Area, Overall.Qual, Total.Bsmt.SF, Garage.Cars) %>%
+  summary()
+```
+
+### Sale price distribution
+
+```{r sale-price-distribution, message=FALSE, warning=FALSE}
+ggplot(housing_reduced, aes(x = SalePrice)) +
+  geom_histogram(fill = "steelblue", color = "white", bins = 30) +
+  labs(x = "Sale Price ($)", y = "Count") +
+  theme_bw()
+```
+
+### Living area vs. sale price
+
+```{r living-area-plot, message=FALSE, warning=FALSE}
+ggplot(housing_reduced, aes(x = Gr.Liv.Area, y = SalePrice)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", color = "red") +
+  labs(x = "Above-Grade Living Area (sq ft)",
+       y = "Sale Price ($)") +
+  theme_bw()
+```
+
+### Neighborhood differences
+
+```{r neighborhood-plot, message=FALSE, warning=FALSE}
+ggplot(housing_reduced,
+       aes(x = reorder(Neighborhood, SalePrice, FUN = median),
+           y = SalePrice)) +
+  geom_boxplot(fill = "steelblue", alpha = 0.7) +
+  coord_flip() +
+  labs(x = "Neighborhood", y = "Sale Price ($)") +
+  theme_bw()
+```
+
+# 2 Model Selection and Validation
+
+"State the modeling strategy here, including rationale for variable inclusion and any preprocessing steps."
+
+\[
+\text{SalePrice}_i = \beta_0 + \beta_1\,\text{Gr.Liv.Area}_i + \beta_2\,\text{Overall.Qual}_i +
+\beta_3\,\text{Year.Built}_i + \beta_4\,\text{Neighborhood}_i + \beta_5\,\text{House.Style}_i +
+\beta_6\,\text{Full.Bath}_i + \beta_7\,\text{Bedroom.AbvGr}_i + \beta_8\,\text{Garage.Cars}_i +
+\beta_9\,\text{Total.Bsmt.SF}_i + \beta_{10}\,\text{Lot.Area}_i + \varepsilon_i,
+\]
+
+"Explain the error assumptions and link back to the scientific question here."
+
+```{r data-prep, message=FALSE, warning=FALSE}
+# Use the reduced housing data for modeling
+model_data <- housing_reduced
+```
+
+# 3 Analyses, Results, and Interpretation
+
+## Full main-effects model
+
+```{r mlr-model, message=FALSE, warning=FALSE}
+# Fit initial model
+mlr_model <- lm(SalePrice ~ ., data = model_data)
+
+# Model summary
+summary(mlr_model)
+
+full_coefs <- coef(summary(mlr_model)) %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column("Term")
+
+full_coefs
+```
+
+"Interpret the full-model output here, including notable coefficients and uncertainty."
+
+## Design matrix illustration
+
+```{r design-matrix, message=FALSE, warning=FALSE}
+X_mat <- model.matrix(mlr_model)
+set.seed(330)
+X_mat[sample(1:nrow(X_mat), 10), ]
+```
+
+## Model diagnostics
+
+```{r diagnostics, message=FALSE, warning=FALSE}
+# Model diagnostics
+diagnostics <- tibble(
+  fitted = fitted(mlr_model),
+  residual = resid(mlr_model),
+  std_resid = rstandard(mlr_model)
+)
+
+# Residuals vs Fitted values
+ggplot(diagnostics, aes(x = fitted, y = residual)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Residuals vs Fitted Values",
+       x = "Fitted Values",
+       y = "Residuals") +
+  theme_minimal()
+
+# QQ plot of residuals
+ggplot(diagnostics, aes(sample = std_resid)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  labs(title = "Normal Q-Q Plot of Standardized Residuals",
+       x = "Theoretical Quantiles",
+       y = "Sample Quantiles") +
+  theme_minimal()
+```
+
+"Discuss diagnostic findings here and comment on model assumptions."
+
+## Reduced model comparison
+
+"Explain selection of reduced model and how it compares to the full model."
+
+```{r reduced-model, message=FALSE, warning=FALSE}
+reduced_model <- lm(
+  SalePrice ~ Gr.Liv.Area + Overall.Qual + Neighborhood + Garage.Cars + Total.Bsmt.SF,
+  data = model_data
+)
+
+summary(reduced_model)
+
+# Compare reduced and full models (both main-effect models)
+anova(reduced_model, mlr_model)
+
+reduced_coefs <- coef(summary(reduced_model)) %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column("Term")
+
+reduced_coefs
+```
+
+"Summarize reduced model performance and implications here."
+
+## Selected contrasts with multcomp
+
+```{r contrasts, message=FALSE, warning=FALSE}
+contrast_matrix <- rbind(
+  "CollgCr vs. NAmes" = c(0, 0, 0, 0, 1, rep(0, ncol(model_matrix <- model.matrix(mlr_model)) - 5))
+)
+
+neighborhood_contrast <- glht(mlr_model, linfct = contrast_matrix)
+summary(neighborhood_contrast)
+confint(neighborhood_contrast)
+```
+
+## Profile-based prediction example
+
+```{r profile-prediction, message=FALSE, warning=FALSE}
+new_profile <- tibble(
+  Gr.Liv.Area = 2000,
+  Overall.Qual = 7,
+  Year.Built = 2005,
+  Neighborhood = factor("CollgCr", levels = levels(model_data$Neighborhood)),
+  House.Style = factor("1Story", levels = levels(model_data$House.Style)),
+  Full.Bath = 2,
+  Bedroom.AbvGr = 3,
+  Garage.Cars = 2,
+  Total.Bsmt.SF = 900,
+  Lot.Area = median(model_data$Lot.Area)
+)
+
+predict(mlr_model, newdata = new_profile, interval = "confidence")
+predict(mlr_model, newdata = new_profile, interval = "prediction")
+```
+
+
+# 4 Conclusions
+
+"Provide overall conclusions, limitations, and future work here."
+
+# 8. References
+
+1. De Cock, D. (2011). Ames, Iowa: Alternative to the Boston Housing Data as an End of Semester Regression Project. *Journal of Statistics Education*, 19(3).
+2. James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). *An Introduction to Statistical Learning with Applications in R*. Springer.
+3. Kutner, M. H., Nachtsheim, C. J., Neter, J., & Li, W. (2004). *Applied Linear Statistical Models* (5th ed.). McGraw-Hill.
+
+# Appendix
+
+## Feedback summary
+
+"Summarize feedback process and responses here."
+
+## A. Additional Plots
+
+```{r additional-plots, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+# Pairwise scatterplot for selected variables
+pairs(
+  housing_reduced %>%
+    select(SalePrice, Gr.Liv.Area, Overall.Qual, Year.Built, Total.Bsmt.SF,
+           Garage.Cars, Lot.Area)
+)
+```
+
+## B. R Session Information
+
+```{r session-info}
+sessionInfo()
+```

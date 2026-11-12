@@ -1,0 +1,190 @@
+---
+title: "What Every you want"
+author: "Example1"
+date: "Today"
+format:
+  pdf:
+    toc: true
+    fig_caption: true
+    number_sections: true
+
+bibliography: [projectreferences.bib,pack.bib]
+nocite: "@R-dplyr @R-knitr @R-gridExtra \n"
+link-citations: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(1234)
+library(tidyverse)
+library(knitr)
+library(dplyr)
+library(gridExtra)
+library(ggthemes)
+
+
+
+```
+
+```{r functions, echo = FALSE}
+knitr::write_bib(c('knitr', 'stringr', 'dplyr', 'gridExtra'),file = 'pack.bib')
+
+if(!exists("proj1.R", mode = "function")){
+  source("proj1.R")
+}
+if(!exists("main", mode = "function")){
+    source("main.R")
+}
+#shell("type projectreferences.bib pack.bib > projectreferences_new.bib ")
+```
+
+\newpage
+
+# Introduction
+
+
+
+
+
+```{r init_params, echo = FALSE}
+n<-c(1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101)
+N<-c(50,100,200)
+N_Exp<-c(1000)
+```
+#show data
+n<-c(1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101)
+N<-c(50,100,200)
+N_Exp<-c(1000)
+The sample size that make up the mean are `r print(n)`
+#methodology
+```{r}
+start_time <- proc.time()
+if (!exists("testmc")){
+  testmc<-proj1(n,N,N_Exp)
+  save(testmc,file="TESTMC")
+} else{
+  load("TESTMC")
+}
+
+end_time <- proc.time()
+
+```
+
+
+
+#comments setting up
+```{r generating_the_data}
+#plots
+#Histogram of p
+ggplot(testmc, aes( p_vl)) +
+  geom_histogram(binwidth = 0.01)
+
+
+ggplot(
+  data = testmc,
+  mapping = aes(x = exp, y = p_vl, color = N)
+) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+
+ggplot(testmc, aes(x = p_vl, color = N)) +
+  geom_density(linewidth = 0.05)
+
+
+
+```
+
+
+# Data
+
+The data regarding animal product intake was sourced through kaggle.com @R-data, while information regarding GDP was sourced from worldometers.info @R-GDP. Each group contains 20 observations, each sampled from a bigger sample of 76 observations from the animal group, and 76 from the plant. The variable of GDP was divided by 1 billion, meaning that all interpretations will be in billions of dollars. The separation between the two groups is `r val`% in animal product fat intake.
+
+The following table shows basic summary statistics for each group in billions of dollars.
+
+## Exploratory Data Analysis
+
+### EDA 1
+
+```{r EDA histogram, echo = FALSE, warning = FALSE, fig.cap = 'Histograms of Animal and Plant distributions showing GDP in billions', out.width = '50%', fig.align = 'center'}
+
+
+```
+### EDA 2
+
+
+```{r EDA Equal Variance, echo = FALSE}
+ftest <- var.test(value ~ group, plot.data,
+         alternative = "two.sided")
+```
+
+
+
+```{r, boxplot, echo = FALSE, warning = FALSE, fig.cap = 'Boxplot comparison of the distribution between Plant and Animal Groups by GDP in billions', out.width = '50%', fig.align = 'center'}
+
+ggplot(data = plot.data, mapping = aes(x = group, y = value, fill = group)) +
+  geom_boxplot() +
+  ylab("GDP") +
+  ylim(0, 2700) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+In order to perform any testing with normal theory, a transformation must be performed on both groups in order to move forward with the normality assumption.s
+
+The following histograms show the relatively normal distribution of both groups after a log transformation, which are both common transformations for right tailed distributions.
+
+```{r, transformed histograms ftest, fig.cap = 'Histograms of Animal and Plant distributions showing Log(GDP)', echo = FALSE}
+
+```
+
+
+
+# Testing / Model Fitting
+
+
+```{r, normal theory t-test or ANOVA, echo = FALSE, include= FALSE}
+
+
+```
+
+
+
+```{r, nonparametric theory wilcox test, echo = FALSE, warning=FALSE, include = FALSE}
+
+```
+
+
+
+# Results
+
+
+# Summary of Conclusions
+
+
+# Future Recommendations
+
+After completing this analysis, it is recognized that there is the possibility of confounding in this study. A recommendation on further analysis would be to find a way to include variables that would limit such confounding. Another recommendation would be to increase the sample size of the study, considering a larger sample size would greatly increase the accuracy of all tests performed.
+
+This analysis has also sparked my interest in analyzing the health benefits of a vegan oriented diet. It is recommended that a future study be completed comparing the same independent variable with a different dependent variable measuring some health outcome, such as the percentage of those with cardiovascular diseases, or percentage of deaths by Covid-19.
+
+\newpage
+
+# References
+
+::: {#refs}
+:::
+
+\newpage
+
+# Appendix
+
+```{r, Appendix Table of Raw Data}
+dat <- cbind(head(animal, 10), head(plant, 10))
+dat
+```
+
+```{r ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}
+
+```
