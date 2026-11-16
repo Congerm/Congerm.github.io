@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://congerm.github.io/portal/index.html</loc>
-    <lastmod>2026-11-12T04:42:58.035Z</lastmod>
+    <loc>https://congerm.github.io/portal/stocks.html</loc>
+    <lastmod>2026-11-16T22:12:30.952Z</lastmod>
+  </url>
+  <url>
+    <loc>https://congerm.github.io/portal/news.html</loc>
+    <lastmod>2026-11-16T22:12:38.987Z</lastmod>
+  </url>
+  <url>
+    <loc>https://congerm.github.io/portal/combined.html</loc>
+    <lastmod>2026-11-16T22:12:41.466Z</lastmod>
   </url>
   <url>
     <loc>https://congerm.github.io/articles/stat469-food-cost.html</loc>
@@ -34,7 +42,7 @@
   </url>
   <url>
     <loc>https://congerm.github.io/projects/index.html</loc>
-    <lastmod>2026-11-12T05:08:15.778Z</lastmod>
+    <lastmod>2026-11-16T22:58:34.426Z</lastmod>
   </url>
   <url>
     <loc>https://congerm.github.io/projects/cs111-daily-tasks.html</loc>
@@ -54,7 +62,7 @@
   </url>
   <url>
     <loc>https://congerm.github.io/login.html</loc>
-    <lastmod>2026-11-12T04:42:49.718Z</lastmod>
+    <lastmod>2026-11-16T22:06:35.328Z</lastmod>
   </url>
   <url>
     <loc>https://congerm.github.io/projects/gc-analysis.html</loc>
@@ -91,5 +99,13 @@
   <url>
     <loc>https://congerm.github.io/articles/stat495r-fda.html</loc>
     <lastmod>2026-11-12T05:08:07.340Z</lastmod>
+  </url>
+  <url>
+    <loc>https://congerm.github.io/portal/index.html</loc>
+    <lastmod>2026-11-16T22:44:09.200Z</lastmod>
+  </url>
+  <url>
+    <loc>https://congerm.github.io/portal/sql.html</loc>
+    <lastmod>2026-11-16T22:44:09.203Z</lastmod>
   </url>
 </urlset>

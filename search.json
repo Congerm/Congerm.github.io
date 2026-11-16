@@ -1,17 +1,24 @@
 [
   {
-    "objectID": "portal/index.html",
-    "href": "portal/index.html",
-    "title": "Data Portal",
+    "objectID": "portal/stocks.html",
+    "href": "portal/stocks.html",
+    "title": "Data Portal — Stocks",
     "section": "",
-    "text": "Signed in as Guest — base (public) permission. Sign in for elevated access · Back to site\nAccess tiers: Guest base views · Member extended datasets · Admin full platform."
+    "text": "Stocks & Prices\nS&P 500 universe: composition, filings, listings — and derived trend views for members. Back to portal\n\n\n\nSector composition\n\n\n\n\n\n\n\nSEC filings activity\n\n\nFilings per month over the last 5 years, by form type.\n\n\n\n\n\n\n\nListings by exchange\n\n\n\n\n\n\n\nSector price trend trend-only\n\n\nIndexed so each sector starts at 100 — underlying values are not shown.\n\n\n\n\n\n\n\nEarnings beat / miss rate trend-only\n\n\n\n\n\n\n\nAnalyst rating mix trend-only\n\n\n\n\n\n\n\nInsider transaction direction trend-only\n\n\nBuys vs. sells per month, summed across sectors.\n\n\n\n\n\n\n\nTicker prices\n\n\nTicker  From  To  Load\n\n\n\n\n\n\n\n\n\n\nSchema map — stocks\n\n\n\n\n\n\nS&P 500 constituents: Wikipedia (CC BY-SA 4.0) · Filings: SEC EDGAR · Market-data views are derived trends from licensed sources; underlying values are not shown."
   },
   {
-    "objectID": "portal/index.html#datasets-tools",
-    "href": "portal/index.html#datasets-tools",
-    "title": "Data Portal",
-    "section": "Datasets & tools",
-    "text": "Datasets & tools\n\n\n\nStocks & Prices\nDaily prices, reference data, and earnings for the S&P 500 universe (stocks.*). Screener-style browser and per-ticker pages.\nComing soon Member\n\n\n\n\nFilings & Events\nSEC filing dates and post-earnings drift event windows powering the PEAD research.\nComing soon Member\n\n\n\n\nNews Corpus\nThe scraped article corpus (news.*) — tickers, sentiment scores, and embeddings built on top.\nComing soon Admin\n\n\n\n\nDashboards\nCross-dataset views: watchlists, drift monitors, and portfolio analytics.\nComing soon Member\n\n\n\n\nQuery Access\nRead-only SQL / API access to curated schemas for approved users.\nComing soon Admin\n\n\n\n\nData Dictionary\nSchema browser for raw_*, staging, and fct_*/dim_* marts — what each table and column means.\nComing soon Guest\n\n\n\n\nPlaceholder landing — pages above are stubs we build out next. Auth is being wired to the app_auth backend; until then this page is reachable directly and the guest button stands in for real gating."
+    "objectID": "portal/news.html",
+    "href": "portal/news.html",
+    "title": "Data Portal — News",
+    "section": "",
+    "text": "News Corpus\nScraped headlines with ticker links, sentiment scores, and embeddings. Back to portal\n\n\n\nArticle volume\n\n\n\n\n\n\n\nSentiment trend\n\n\nMean sentiment score per week by outlet.\n\n\n\n\n\n\n\nTop tickers\n\n\n\n\n\n\n\nEmbedding map\n\n\nEach point is an article projected to 2D. Click a point to open the article.\n\n\n\n\n\n\n\nArticle detail\n\n\nAdmin only — click a point on the map above to load the stored detail.\n\n\n\n\n\n\n\nClusters\n\n\n\n\n\n\n\nSchema map — news\n\n\n\n\n\n\nHeadlines link to original publishers; article text is not stored or shown here."
+  },
+  {
+    "objectID": "portal/combined.html",
+    "href": "portal/combined.html",
+    "title": "Data Portal — Combined",
+    "section": "",
+    "text": "Combined Views\nCross-dataset joins between the stocks universe and the news corpus. Back to portal\n\n\n\nSector sentiment trend-only\n\n\n\n\n\n\n\n\n\n\nNews around SEC filings\n\n\nArticle volume in the days before/after a filing (offset 0 = filing day).\n\n\n\n\n\n\n\nSentiment vs. price direction trend-only\n\n\nShare of mentions followed by an upward move, by horizon.\n\n\n\n\n\n\nS&P 500 constituents: Wikipedia (CC BY-SA 4.0) · Filings: SEC EDGAR · Market-data views are derived trends from licensed sources; underlying values are not shown."
   },
   {
     "objectID": "articles/stat469-food-cost.html",
@@ -197,7 +204,7 @@
     "href": "projects/index.html",
     "title": "Projects",
     "section": "",
-    "text": "Apps, pipelines, and interactive work — each page links to the project folder in the monorepo’s research/ directory (or its own repository). Report-style analysis and writing lives under Articles.",
+    "text": "Apps, pipelines, and interactive work — each page links to the project folder in the monorepo’s projects/ directory (or its own repository). Report-style analysis and writing lives under Articles.",
     "crumbs": [
       "Home",
       "Projects"
@@ -208,7 +215,7 @@
     "href": "projects/index.html#elsewhere-on-github",
     "title": "Projects",
     "section": "Elsewhere on GitHub",
-    "text": "Elsewhere on GitHub\nProjects that live in their own repositories — some with their own deployed sites:\n\n\n\nUtah Housing Project\nSTAT 386 final project — its own Quarto site with docs, tutorial, and a technical report. Also archived in research/utah-housing.\nLive site · Repo\nPython Quarto Live site\n\n\n\n\nStat 386 Portfolio\nThe Quarto portfolio site this one grew out of — includes the original blog posts now ported under Articles.\nLive site · Repo\nQuarto Live site\n\n\n\n\nGC Analysis\nThe upstream repo for the GC Analysis project — the monorepo copy is the fuller local version.\nRepo\nPython NLP\n\n\n\n\nStat 386 Project Example\nEarly STAT 386 work — General Conference analysis notebook, predecessor to the GC Analysis project.\nRepo\nPython Jupyter",
+    "text": "Elsewhere on GitHub\nProjects that live in their own repositories — some with their own deployed sites:\n\n\n\nUtah Housing Project\nSTAT 386 final project — its own Quarto site with docs, tutorial, and a technical report. Also archived in projects/utah-housing.\nLive site · Repo\nPython Quarto Live site\n\n\n\n\nStat 386 Portfolio\nThe Quarto portfolio site this one grew out of — includes the original blog posts now ported under Articles.\nLive site · Repo\nQuarto Live site\n\n\n\n\nGC Analysis\nThe upstream repo for the GC Analysis project — the monorepo copy is the fuller local version.\nRepo\nPython NLP\n\n\n\n\nStat 386 Project Example\nEarly STAT 386 work — General Conference analysis notebook, predecessor to the GC Analysis project.\nRepo\nPython Jupyter",
     "crumbs": [
       "Home",
       "Projects"
@@ -329,7 +336,7 @@
     "href": "login.html",
     "title": "Data Portal — Sign In",
     "section": "",
-    "text": "Sign in\nAccess the data platform: stock prices, filings & events, the news corpus, and upcoming datasets. Access is tiered — guests get base permission; signed-in users see what their account allows.\n\nEmail \nPassword \n\nSign in\n\n\n\n\n\nor\n\nContinue as guest\n\nGuest access is limited to base (public) data views."
+    "text": "Sign in\nAccess the data platform: stock prices, filings & events, the news corpus, and upcoming datasets. Access is tiered — guests get base permission; signed-in users see what their account allows.\n\n\nSigned in as .\n\n\nGo to the portal Sign out\n\n\n\nEmail \nPassword \n\nSign in\n\n\n\n\n\nor\n\nContinue as guest\n\nGuest access is limited to base (public) data views."
   },
   {
     "objectID": "projects/gc-analysis.html",
@@ -558,5 +565,19 @@
       "Articles",
       "Functional Data Analysis — Filings & Intraday Returns"
     ]
+  },
+  {
+    "objectID": "portal/index.html",
+    "href": "portal/index.html",
+    "title": "Data Portal",
+    "section": "",
+    "text": "Data Portal\nTiered access to the data platform — what you see depends on your account.\n\n\n\n\nAccess levels can’t be verified right now — the backend may be offline. Pages below may not load.\n\n\n\nStocks & Prices\nSector composition, filings activity, listings — plus member trends and admin ticker charts over the S&P 500 universe.\nOpen Stocks\n\n\nNews Corpus\nArticle volume, sentiment trends, top tickers, and an embedding map of the scraped news corpus.\nOpen News\n\n\nCombined Views\nCross-dataset views: sector sentiment vs. prices, and news volume around SEC filings.\nOpen Combined\n\n\nSQL & Database Map\nFull data dictionary, schema map (ERD), and a read-only SQL console for admins.\nOpen SQL & Map"
+  },
+  {
+    "objectID": "portal/sql.html",
+    "href": "portal/sql.html",
+    "title": "Data Portal — SQL & Database Map",
+    "section": "",
+    "text": "SQL & Database Map\nEverything your tier can see — tables, columns, relationships — plus a read-only console for admins. Back to portal\n\n\n\nSQL console admin\n\n\nRead-only queries against permitted schemas. Limited to 500 rows.\n\n\n\nRun\n\n\n\n\n\n\n\n\n\nSchema map\n\n\n\n\n\n\nS&P 500 constituents: Wikipedia (CC BY-SA 4.0) · Filings: SEC EDGAR · Market-data views are derived trends from licensed sources; underlying values are not shown."
   }
 ]
