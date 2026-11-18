@@ -4,7 +4,7 @@
     "href": "portal/stocks.html",
     "title": "Data Portal — Stocks",
     "section": "",
-    "text": "Stocks & Prices\nS&P 500 universe: composition, filings, listings — and derived trend views for members. Back to portal\n\n\n\nSector composition\n\n\n\n\n\n\n\nSEC filings activity\n\n\nFilings per month over the last 5 years, by form type.\n\n\n\n\n\n\n\nListings by exchange\n\n\n\n\n\n\n\nSector price trend trend-only\n\n\nIndexed so each sector starts at 100 — underlying values are not shown.\n\n\n\n\n\n\n\nEarnings beat / miss rate trend-only\n\n\n\n\n\n\n\nAnalyst rating mix trend-only\n\n\n\n\n\n\n\nInsider transaction direction trend-only\n\n\nBuys vs. sells per month, summed across sectors.\n\n\n\n\n\n\n\nTicker prices\n\n\nTicker  From  To  Load\n\n\n\n\n\n\n\n\n\n\nSchema map — stocks\n\n\n\n\n\n\nS&P 500 constituents: Wikipedia (CC BY-SA 4.0) · Filings: SEC EDGAR · Market-data views are derived trends from licensed sources; underlying values are not shown."
+    "text": "Stocks & Prices\nS&P 500 universe: composition, filings, listings — and derived trend views for members. Back to portal\n\n\n\nSector composition\n\n\n\n\n\n\n\nSEC filings activity\n\n\nFilings per month over the last 5 years, by form type.\n\n\n\n\n\n\n\nListings by exchange\n\n\n\n\n\n\n\nSector price trend trend-only\n\n\nIndexed so each sector starts at 100 — underlying values are not shown.\n\n\n\n\n\n\n\nEarnings beat / miss rate trend-only\n\n\n\n\n\n\n\nAnalyst rating mix trend-only\n\n\n\n\n\n\n\nInsider transaction direction trend-only\n\n\nBuys vs. sells per month, summed across sectors.\n\n\n\n\n\n\n\nMy watchlist\n\n\nTickers you’re following — saved to your account.\n\n\nTicker  Note  Add\n\n\n\n\n\n\n\nTicker prices\n\n\nTicker  From  To  Load\n\n\n\n\n\n\n\n\n\n\nSchema map — stocks\n\n\n\n\n\n\nS&P 500 constituents: Wikipedia (CC BY-SA 4.0) · Filings: SEC EDGAR · Market-data views are derived trends from licensed sources; underlying values are not shown."
   },
   {
     "objectID": "portal/news.html",
@@ -222,16 +222,139 @@
     ]
   },
   {
-    "objectID": "projects/cs111-daily-tasks.html",
-    "href": "projects/cs111-daily-tasks.html",
-    "title": "Daily Tasks App",
+    "objectID": "projects/data-portal.html",
+    "href": "projects/data-portal.html",
+    "title": "A Permission-Aware Market & News Data Portal",
     "section": "",
-    "text": "An early personal project: menus, task storage in SQLite (Stock_Data.db), import utilities, and an insights view — the first iteration of the “personal data” idea this whole monorepo now runs on.\n\nCode: private — available on request\nPython SQLite",
+    "text": "I designed and built a PostgreSQL-backed data portal that serves stock-market and financial-news data to three tiers of users — anonymous guests, signed-in members, and admins — with what each user sees enforced inside the database itself. The database runs on Supabase, and the interface is a static site with live charts, an interactive article map, a personal watchlist, and a read-only SQL console.",
     "crumbs": [
       "Home",
       "Projects",
-      "Daily Tasks App"
+      "A Permission-Aware Market & News Data Portal"
     ]
+  },
+  {
+    "objectID": "projects/data-portal.html#the-problem",
+    "href": "projects/data-portal.html#the-problem",
+    "title": "A Permission-Aware Market & News Data Portal",
+    "section": "The Problem",
+    "text": "The Problem\nThis project grew out of a personal process I actually run: investment research. I collect market data (prices, filings, earnings, analyst ratings, insider transactions) and a corpus of scraped financial-news articles that I enrich with ticker mentions, sentiment scores, and embeddings. Until now the data only lived in a warehouse I could reach from my own machines — useful to me, invisible to everyone else, and impossible to share safely.\nThat sharing problem turned out to be the interesting one:\n\nMixed licensing. Some sources are public (SEC filings, Wikipedia’s S&P 500 list, exchange symbol directories, my own derived data), but the market data vendors I use license their data for personal use only. I can show trends computed from that data — I cannot hand out the raw numbers.\nMixed audiences. A recruiter or classmate browsing my site is a guest; a signed-in member should see more; I (the admin) need everything. One static page can’t serve all three without somewhere to enforce the rules.\nNo editing surface. Members had no way to interact with the data — no way to keep a list of tickers they care about or shape their own view.\n\nThe domain therefore has two parts: securities and everything recorded about them, and articles and everything derived from them. Access control is a real requirement of the app, but accounts and permissions are application plumbing — they live outside the domain model.\n\nUsers\n\nGuest — no account; explores public data (index composition, filings activity, headlines, sentiment aggregates, the article map).\nMember — signed in; additionally sees derived trends computed from licensed data (rebased sector price indexes, earnings beat rates, analyst mix, insider direction, sentiment-vs-move statistics) and keeps a personal watchlist.\nAdmin — me; additionally reads raw rows (full OHLCV series, article detail with model rationales) and runs read-only SQL against the warehouse.",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "A Permission-Aware Market & News Data Portal"
+    ]
+  },
+  {
+    "objectID": "projects/data-portal.html#analysis-and-design",
+    "href": "projects/data-portal.html#analysis-and-design",
+    "title": "A Permission-Aware Market & News Data Portal",
+    "section": "Analysis and Design",
+    "text": "Analysis and Design\n\nDomain description\nA Security is issued by a Company and listed on an Exchange. Each security accumulates daily prices, earnings events, corporate actions, analyst estimates/consensus/price targets, institutional ownership, and insider activity. Membership in a stock index changes over time, so IndexMembership records when a security was added and removed and which sector it belongs to.\nAn Outlet publishes Articles. An article can mention many securities and a security can appear in many articles, so TickerMention is an association class carrying how often the ticker appeared, whether it was in the headline, and how it was found. Each mention is scored by models (SentimentScore), and each article can hold Embeddings reduced to EmbeddingProjections for the article map.\nUser accounts, roles, and sessions are provided by the application’s auth layer (Supabase Auth) and are deliberately outside the domain model.\n\n\nDomain Class Diagram\n\n\n\nUML domain class diagram — 22 classes including the TickerMention association class\n\n\n22 classes including the TickerMention association class, with multiplicities on every association. The diagram was generated by a small Python script that lays out boxes and orthogonal connectors explicitly to minimize crossing lines.\n\n\nKey design decisions\n\nThe database enforces permissions, not the page. The site is static — its HTML is public and contains no data. Every read goes through a SECURITY DEFINER function in a dedicated portal schema that resolves the caller’s tier (Supabase Auth JWT → app.users.role, defaulting to guest) and returns only what that tier may see. The anonymous API role has no grants on the data schemas at all.\n“Derived” is a first-class access level. Between “invisible” and “readable” sits derived: the member tier sees structure and server-transformed trends (indexed prices, percentages, medians, counts) but never raw vendor values. This is how licensed market data can legitimately power a public demo. Member trend functions aggregate inside Postgres before any JSON leaves the server.\nArticle bodies stay out of the database. Only headline, URL, and derived rows are stored — cheaper, and it respects publisher copyright.\nSentiment attaches to the mention, not the article. An article can say good things about one ticker and bad things about another; scoring the article–ticker pair is what makes per-ticker sentiment meaningful.\n\n\n\nDeliberately out of scope\n\nTrading — no order placement or brokerage connection; this is a research tool.\nReal-time data — end-of-day prices only; no tick stream.\nAnything but US equities — no options, futures, forex, or non-US listings; daily prices cover the S&P 500 universe, 2015–2025.\nFull article text — copyright and storage; headline + link + derived rows only.\nYour own portfolio — positions, cost basis, and transactions are not modeled.\nAccounts and permissions — user accounts, roles, and sessions are the app’s auth layer, separate from the domain tables.\nUser-generated content — no posting, comments, or social features.",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "A Permission-Aware Market & News Data Portal"
+    ]
+  },
+  {
+    "objectID": "projects/data-portal.html#the-solution",
+    "href": "projects/data-portal.html#the-solution",
+    "title": "A Permission-Aware Market & News Data Portal",
+    "section": "The Solution",
+    "text": "The Solution\n\nThe database\nThe design is implemented on Supabase in three data schemas plus a published API surface:\n\n\n\n\n\n\n\nSchema\nContents\n\n\n\n\nstocks\nexchanges, companies, securities, index_memberships, daily_prices, sec_filings, earnings_events, corporate_actions, analyst_consensus/estimates/price_targets, insider_roster/transactions, institutional_ownership\n\n\nnews\noutlets, articles (metadata only), article_tickers, sentiment_scores, article_embeddings, embedding_projections\n\n\napp\nroles, users, role_permissions, sessions, watchlist_entries — application plumbing (auth + member watchlists), outside the domain model\n\n\nportal\n~20 SECURITY DEFINER functions — the only surface the browser can call — plus a private portal_cache materialized view for precomputed trends\n\n\n\nForeign keys tie the graph together exactly as the diagram shows: every fact table references securities.ticker; article_tickers joins articles.id to securities.ticker (the TickerMention association class); sentiment_scores references a mention. The member watchlist (app.watchlist_entries) joins each signed-in user to the securities they follow — an application record kept deliberately thin, since the domain itself doesn’t model accounts.\nThe permission layer is table-driven: app.role_permissions maps each role to resource patterns (schema.*, schema.table, schema.table.column) with levels none &lt; derived &lt; read &lt; write, most specific rule wins. Guest sees the public columns, member adds derived trends, admin sees raw values.\nFor grading, a standalone, re-runnable build script (is302_schema.sql) creates an equivalent is302 schema implementing the domain model (the stocks + news tables), indexes on the commonly filtered columns (ticker, dates, article/source links), a reporting view that joins articles → mentions → sentiment → securities → outlets into one per-ticker news summary, and sample data for every table.\n\n\nThe application\nThe portal is a static Quarto site on GitHub Pages. Every chart calls a portal.* RPC; sections that need a higher tier are simply not rendered for lower tiers.\n\n\n\nPage\nWho\nWhat it shows\n\n\n\n\nSign-in\neveryone\nSupabase Auth email+password login, or “continue as guest”\n\n\nPortal home\neveryone\ncards for each section, filtered by what your tier may see; tier badge + sign-in/out\n\n\nStocks\nguest+\nS&P 500 sector composition, SEC filings per month by form type, listings by exchange — plus a live ERD of the schema built from the permission-aware catalog\n\n\n\nmember\nsector price trend (indexed to 100), earnings beat/miss heat map, analyst rating mix, insider buy/sell direction — all server-derived\n\n\n\nmember\nwatchlist form: add/remove tickers to a personal watchlist, saved to the database\n\n\n\nadmin\nraw OHLCV chart + table for any ticker\n\n\nNews\nguest+\narticle volume by outlet, weekly sentiment trend, top-mentioned tickers, and an interactive UMAP embedding map of the whole corpus (click a point to open the article)\n\n\n\nadmin\narticle detail with per-mention sentiment rationales\n\n\nCombined\nguest+\nsector-level news sentiment; member adds “% of sentiment-labelled mentions followed by an up move over 1/5/20 days”\n\n\nSQL & Map\nguest+\nfull data dictionary + ERD for your tier\n\n\n\nadmin\nread-only SQL console (single SELECT, enforced read-only in the function itself)\n\n\n\nQuality view — the embedding map is the flagship view: every article in the corpus as a 2-D point, colored by outlet, clickable to the publisher’s page. Form — the member watchlist (add a ticker with an optional note; the row is written to app.watchlist_entries). Dashboard — the Stocks page is a summary dashboard of composition, filings, listings, and member trend panels; the Combined page is the cross-dataset dashboard.\nThe sign-in view — the only gate in the app. “Continue as guest” hands the browser the anonymous role; a member or admin login mints a Supabase Auth session and upgrades the tier badge:\n\n\n\nSign-in page\n\n\nThe portal hub after landing: each card is a section, and the guest tier only sees the cards its permissions cover — the same card grid grows for members and admins:\n\n\n\nPortal home as a guest\n\n\nThe Stocks dashboard as a guest — S&P 500 sector composition with the tier badge visible (“GUEST / Browsing as guest”). Members get additional derived-trend panels below this fold, plus the watchlist form; admins get the raw OHLCV panel:\n\n\n\nStocks page sector composition (guest tier)\n\n\nAnd the flagship quality view — the interactive embedding map: every article in the corpus projected to two dimensions and colored by outlet, with each point linking out to the publisher’s page:\n\n\n\nEmbedding map of the news corpus",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "A Permission-Aware Market & News Data Portal"
+    ]
+  },
+  {
+    "objectID": "projects/data-portal.html#insights",
+    "href": "projects/data-portal.html#insights",
+    "title": "A Permission-Aware Market & News Data Portal",
+    "section": "Insights",
+    "text": "Insights\nThe analysis notebook asks the obvious question of this data: does a news mention’s sentiment predict what the stock does next? It joins every scored ticker mention to the ticker’s next 21 daily closes, computes 1-, 5-, and 20-trading-day forward returns, and regresses return on sentiment score.\n\n\n\nLeft: mean forward returns after a mention, by sentiment label. Right: each mention’s sentiment score vs. its realized 5-day move, with a fitted regression line.\n\n\nThe honest answer: no. Across 854 scored mentions with enough price history, the OLS slope of the 5-day forward return on sentiment score is +0.05% per unit of score — statistically indistinguishable from zero (p = 0.897, R² = 0.000). The logistic model agrees (p = 0.584): it puts the chance of an up week at about 54% after a maximally negative mention and about 50% after a maximally positive one — backwards, if anything.\nTwo quieter findings are more interesting than the headline:\n\nEverything drifts up together. Mean 5-day returns are positive for every label (+0.5% negative, +1.3% neutral, +0.6% positive) because the coverage universe is S&P 500 names in a mostly-rising market. Neutral mentions averaged the best returns — routine coverage of names already trending, not sentiment causing the move.\nThe score measures tone, not edge. The null result is a useful validation: the sentiment pipeline is describing how articles read, and nothing more — which is exactly what a compliance-sensitive aggregate should be.\n\nCaveats: mentions cluster (the same event is covered by many outlets, so rows aren’t independent), the sample tilts toward large caps with the most coverage, and association is not a tradable signal.",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "A Permission-Aware Market & News Data Portal"
+    ]
+  },
+  {
+    "objectID": "projects/data-portal.html#reflection",
+    "href": "projects/data-portal.html#reflection",
+    "title": "A Permission-Aware Market & News Data Portal",
+    "section": "Reflection",
+    "text": "Reflection\nThe hard part was not drawing the diagram — it was the permission model. A static site means anyone can open DevTools and read whatever the API returns, so “hiding values in a chart” is not security. The honest design was to make the database the enforcer: one API schema of SECURITY DEFINER functions, a table of permission rules, and — the subtle piece — a “derived” tier that returns transformations (rebased indexes, percentages, counts) computed server-side rather than the raw licensed values. Getting that clean took a redesign: the first version gave members raw read access to vendor tables.\nWhat I learned: treating “who may see what” as data (rows in role_permissions, resolved per-call) instead of code made the tiers cheap to change and audit, and it produced the permission-aware data dictionary for free. I also learned how much domain modeling pays off — the TickerMention association class is the single decision that makes per-ticker sentiment coherent.\nNext: more outlets and a larger corpus, alerting on watchlist tickers, and exploring whether the derived-tier trick generalizes to other licensed datasets. If I did it again I’d design the permission rules earlier — retrofitting them onto existing tables was the most error-prone step.",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "A Permission-Aware Market & News Data Portal"
+    ]
+  },
+  {
+    "objectID": "login.html",
+    "href": "login.html",
+    "title": "Data Portal — Sign In",
+    "section": "",
+    "text": "Sign in\nAccess the data platform: stock prices, filings & events, the news corpus, and upcoming datasets. Access is tiered — guests get base permission; signed-in users see what their account allows.\n\n\nSigned in as .\n\n\nGo to the portal Sign out\n\n\n\nEmail \nPassword \n\nSign in\n\n\n\n\n\nor\n\nContinue as guest\n\nGuest access is limited to base (public) data views."
+  },
+  {
+    "objectID": "platform.html",
+    "href": "platform.html",
+    "title": "Data Platform",
+    "section": "",
+    "text": "The data/ section of the monorepo is a small but real warehouse stack."
+  },
+  {
+    "objectID": "platform.html#flow",
+    "href": "platform.html#flow",
+    "title": "Data Platform",
+    "section": "Flow",
+    "text": "Flow\ndata/acquisition/&lt;project&gt;/   ──(downloads / scrapes)──▶  data/DATA/&lt;source&gt;/\n                                                            │  uv run ingest\n                                                            ▼\nSupabase:  raw_&lt;source&gt;.*  →  staging (stg_*, views)  →  intermediate (int_*)\n                                                            │\n                                                            ▼\n                                        marts (fct_* / dim_* tables)"
+  },
+  {
+    "objectID": "platform.html#pieces",
+    "href": "platform.html#pieces",
+    "title": "Data Platform",
+    "section": "Pieces",
+    "text": "Pieces\n\n\n\n\n\n\n\n\nComponent\nPath\nWhat it does\n\n\n\n\nDrop zone\ndata/DATA/\nLocal files per source; contents gitignored\n\n\nAcquisition\ndata/acquisition/\nDownloader/scraper projects (e.g. post-earnings-drift)\n\n\nIngestion\ndata/ingestion/\nLoads files + APIs into raw_*, logs runs to meta.ingestion_runs\n\n\ndbt\ndata/dbt/\nstg_/int_/fct_/dim_ layers; dev/ci/prod targets\n\n\nMigrations\ndata/supabase/migrations/\nVersioned DDL for the warehouse"
+  },
+  {
+    "objectID": "platform.html#conventions",
+    "href": "platform.html#conventions",
+    "title": "Data Platform",
+    "section": "Conventions",
+    "text": "Conventions\n\nStaging models are 1:1 with raw tables — rename + cast only.\nMarts are the analytics layer: fct_ for events, dim_ for entities.\ndev target builds into dev_&lt;user&gt;_* schemas; prod builds into bare staging/intermediate/marts on merge or the nightly GitHub Action.\n\nSource is private — available on request."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Matthew Conger",
+    "section": "",
+    "text": "Statistics major at BYU, graduating April 2027. I collect messy data, structure it, and use it to answer real questions.\nSee my projects Read my articles\nMount Timpanogos — Brian Smith, CC BY-SA 3.0"
+  },
+  {
+    "objectID": "index.html#about-me",
+    "href": "index.html#about-me",
+    "title": "Matthew Conger",
+    "section": "About me",
+    "text": "About me\nI’m a Statistics major (Data Science emphasis) at BYU, graduating April 2027.\nThis past summer I interned at ProdataKey as a data analyst. My main project was a dbt + Snowflake pipeline that classifies dealer accounts by growth trend, with Tableau dashboards on top for the sales team. Before that I spent a year as a research assistant in the Marriott School of Business — mostly logistic regression on survey data about how employees perceive AI. Before that, a year on a seven-person front-end team at the business school writing React and TypeScript.\nThe common thread is that I like the whole process: getting data that wasn’t meant to be analyzed, cleaning it properly, and ending with an answer someone can use. Apps and pipelines are under Projects; the longer write-ups are under Articles. Everything lives in a private monorepo that also runs the Supabase + dbt data platform underneath the ongoing work."
+  },
+  {
+    "objectID": "index.html#what-i-work-with",
+    "href": "index.html#what-i-work-with",
+    "title": "Matthew Conger",
+    "section": "What I work with",
+    "text": "What I work with\n\n\nData engineering\ndbt · Snowflake · Postgres/Supabase · Tableau · GitHub Actions · ingestion pipelines · web scraping\n\n\nAnalysis & modeling\nPython (pandas/polars, scikit-learn) · R (tidyverse, gamlss, Prophet) · regression · time series · functional data analysis\n\n\nCommunication\nQuarto · technical writing · RevealJS slides · Matplotlib/Seaborn · ggplot2\n\n\nTools\nGit/GitHub · Jupyter · Excel/VBA · uv · Streamlit"
+  },
+  {
+    "objectID": "index.html#featured-work",
+    "href": "index.html#featured-work",
+    "title": "Matthew Conger",
+    "section": "Featured work",
+    "text": "Featured work\n\n\n\nPost-Earnings Drift\nDo S&P 500 prices fully adjust on filing day? A technical report applying functional data analysis to SEC filing windows, 2015–2025.\nStatistics Finance R\n\n\n\n\nGC Analysis\nScraping + NLP embeddings over decades of General Conference talks, with its own Quarto site and Streamlit app.\nPython NLP Quarto\n\n\n\n\nData Platform\nA working warehouse on Supabase Postgres — raw file and API ingestion, dbt staging/intermediate/marts, migrations, scheduled runs.\ndbt Supabase"
   },
   {
     "objectID": "resume.html",
@@ -276,67 +399,16 @@
     "text": "Contact\n\nEmail: matthewdavidconger@gmail.com\nPhone: (801) 979-2539\nGitHub: github.com/congerm\nLinkedIn: linkedin.com/in/conger-matthew"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Matthew Conger",
+    "objectID": "projects/cs111-daily-tasks.html",
+    "href": "projects/cs111-daily-tasks.html",
+    "title": "Daily Tasks App",
     "section": "",
-    "text": "Statistics major at BYU, graduating April 2027. I collect messy data, structure it, and use it to answer real questions.\nSee my projects Read my articles\nMount Timpanogos — Brian Smith, CC BY-SA 3.0"
-  },
-  {
-    "objectID": "index.html#about-me",
-    "href": "index.html#about-me",
-    "title": "Matthew Conger",
-    "section": "About me",
-    "text": "About me\nI’m a Statistics major (Data Science emphasis) at BYU, graduating April 2027.\nThis past summer I interned at ProdataKey as a data analyst. My main project was a dbt + Snowflake pipeline that classifies dealer accounts by growth trend, with Tableau dashboards on top for the sales team. Before that I spent a year as a research assistant in the Marriott School of Business — mostly logistic regression on survey data about how employees perceive AI. Before that, a year on a seven-person front-end team at the business school writing React and TypeScript.\nThe common thread is that I like the whole process: getting data that wasn’t meant to be analyzed, cleaning it properly, and ending with an answer someone can use. Apps and pipelines are under Projects; the longer write-ups are under Articles. Everything lives in a private monorepo that also runs the Supabase + dbt data platform underneath the ongoing work."
-  },
-  {
-    "objectID": "index.html#what-i-work-with",
-    "href": "index.html#what-i-work-with",
-    "title": "Matthew Conger",
-    "section": "What I work with",
-    "text": "What I work with\n\n\nData engineering\ndbt · Snowflake · Postgres/Supabase · Tableau · GitHub Actions · ingestion pipelines · web scraping\n\n\nAnalysis & modeling\nPython (pandas/polars, scikit-learn) · R (tidyverse, gamlss, Prophet) · regression · time series · functional data analysis\n\n\nCommunication\nQuarto · technical writing · RevealJS slides · Matplotlib/Seaborn · ggplot2\n\n\nTools\nGit/GitHub · Jupyter · Excel/VBA · uv · Streamlit"
-  },
-  {
-    "objectID": "index.html#featured-work",
-    "href": "index.html#featured-work",
-    "title": "Matthew Conger",
-    "section": "Featured work",
-    "text": "Featured work\n\n\n\nPost-Earnings Drift\nDo S&P 500 prices fully adjust on filing day? A technical report applying functional data analysis to SEC filing windows, 2015–2025.\nStatistics Finance R\n\n\n\n\nGC Analysis\nScraping + NLP embeddings over decades of General Conference talks, with its own Quarto site and Streamlit app.\nPython NLP Quarto\n\n\n\n\nData Platform\nA working warehouse on Supabase Postgres — raw file and API ingestion, dbt staging/intermediate/marts, migrations, scheduled runs.\ndbt Supabase"
-  },
-  {
-    "objectID": "platform.html",
-    "href": "platform.html",
-    "title": "Data Platform",
-    "section": "",
-    "text": "The data/ section of the monorepo is a small but real warehouse stack."
-  },
-  {
-    "objectID": "platform.html#flow",
-    "href": "platform.html#flow",
-    "title": "Data Platform",
-    "section": "Flow",
-    "text": "Flow\ndata/acquisition/&lt;project&gt;/   ──(downloads / scrapes)──▶  data/DATA/&lt;source&gt;/\n                                                            │  uv run ingest\n                                                            ▼\nSupabase:  raw_&lt;source&gt;.*  →  staging (stg_*, views)  →  intermediate (int_*)\n                                                            │\n                                                            ▼\n                                        marts (fct_* / dim_* tables)"
-  },
-  {
-    "objectID": "platform.html#pieces",
-    "href": "platform.html#pieces",
-    "title": "Data Platform",
-    "section": "Pieces",
-    "text": "Pieces\n\n\n\n\n\n\n\n\nComponent\nPath\nWhat it does\n\n\n\n\nDrop zone\ndata/DATA/\nLocal files per source; contents gitignored\n\n\nAcquisition\ndata/acquisition/\nDownloader/scraper projects (e.g. post-earnings-drift)\n\n\nIngestion\ndata/ingestion/\nLoads files + APIs into raw_*, logs runs to meta.ingestion_runs\n\n\ndbt\ndata/dbt/\nstg_/int_/fct_/dim_ layers; dev/ci/prod targets\n\n\nMigrations\ndata/supabase/migrations/\nVersioned DDL for the warehouse"
-  },
-  {
-    "objectID": "platform.html#conventions",
-    "href": "platform.html#conventions",
-    "title": "Data Platform",
-    "section": "Conventions",
-    "text": "Conventions\n\nStaging models are 1:1 with raw tables — rename + cast only.\nMarts are the analytics layer: fct_ for events, dim_ for entities.\ndev target builds into dev_&lt;user&gt;_* schemas; prod builds into bare staging/intermediate/marts on merge or the nightly GitHub Action.\n\nSource is private — available on request."
-  },
-  {
-    "objectID": "login.html",
-    "href": "login.html",
-    "title": "Data Portal — Sign In",
-    "section": "",
-    "text": "Sign in\nAccess the data platform: stock prices, filings & events, the news corpus, and upcoming datasets. Access is tiered — guests get base permission; signed-in users see what their account allows.\n\n\nSigned in as .\n\n\nGo to the portal Sign out\n\n\n\nEmail \nPassword \n\nSign in\n\n\n\n\n\nor\n\nContinue as guest\n\nGuest access is limited to base (public) data views."
+    "text": "An early personal project: menus, task storage in SQLite (Stock_Data.db), import utilities, and an insights view — the first iteration of the “personal data” idea this whole monorepo now runs on.\n\nCode: private — available on request\nPython SQLite",
+    "crumbs": [
+      "Home",
+      "Projects",
+      "Daily Tasks App"
+    ]
   },
   {
     "objectID": "projects/gc-analysis.html",
@@ -571,7 +643,7 @@
     "href": "portal/index.html",
     "title": "Data Portal",
     "section": "",
-    "text": "Data Portal\nTiered access to the data platform — what you see depends on your account.\n\n\n\n\nAccess levels can’t be verified right now — the backend may be offline. Pages below may not load.\n\n\n\nStocks & Prices\nSector composition, filings activity, listings — plus member trends and admin ticker charts over the S&P 500 universe.\nOpen Stocks\n\n\nNews Corpus\nArticle volume, sentiment trends, top tickers, and an embedding map of the scraped news corpus.\nOpen News\n\n\nCombined Views\nCross-dataset views: sector sentiment vs. prices, and news volume around SEC filings.\nOpen Combined\n\n\nSQL & Database Map\nFull data dictionary, schema map (ERD), and a read-only SQL console for admins.\nOpen SQL & Map"
+    "text": "Data Portal\nTiered access to the data platform — what you see depends on your account.\n\n\n\n\nAccess levels can’t be verified right now — the backend may be offline. Pages below may not load.\n\n\n\nStocks & Prices\nSector composition, filings activity, listings — plus member trends and admin ticker charts over the S&P 500 universe.\nOpen Stocks\n\n\nNews Corpus\nArticle volume, sentiment trends, top tickers, and an embedding map of the scraped news corpus.\nOpen News\n\n\nCombined Views\nCross-dataset views: sector sentiment vs. prices, and news volume around SEC filings.\nOpen Combined\n\n\nSQL & Database Map\nFull data dictionary, UML schema map, and a read-only SQL console for admins.\nOpen SQL & Map"
   },
   {
     "objectID": "portal/sql.html",
